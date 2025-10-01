@@ -22,6 +22,9 @@ jobs:
 
         - name: Render Quarto Project
           uses: quarto-dev/quarto-actions/render@v2
+          with:
+            # to: html # If set, it will be equivalent to `quarto render --to html`
+            path: 'website/*'
 
         - name: Publish to GitHub Pages
           uses: quarto-dev/quarto-actions/publish@v2
