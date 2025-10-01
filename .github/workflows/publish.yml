@@ -24,11 +24,12 @@ jobs:
           uses: quarto-dev/quarto-actions/render@v2
           with:
             # to: html # If set, it will be equivalent to `quarto render --to html`
-            path: 'website/*'
+            path: website
 
         - name: Publish to GitHub Pages
           uses: quarto-dev/quarto-actions/publish@v2
           with:
             target: gh-pages # renderred html files will be pushed here
+            path: website
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # this secret is always available for github actions
