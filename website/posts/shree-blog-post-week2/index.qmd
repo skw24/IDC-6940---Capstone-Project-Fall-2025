@@ -1,0 +1,69 @@
+---
+title: "Literature Review Week 2"
+description: "Literature review for the Week 2 of the course IDC-6940 for Fall 2025"
+author:
+  - name: Shree Krishna Basnet
+    # url: https://github.com/renanmb
+    affiliation: Master of Data Science Program @ The University of West Florida (UWF)
+    # affiliation-url: https://ucsb-meds.github.io/
+# date: 10-24-2022
+categories: [literature review, week 2]
+# citation:
+#   url: https://samanthacsik.github.io/posts/2022-10-24-my-blog-post/
+image: images/spongebob-imagination.jpg
+draft: false
+bibliography: references.bib
+link-citations: true
+---
+
+## Article 1 
+
+link: https://robertominguez.altervista.org/DocumentacionAcreditativa/Articulos/GuancheMM13.pdf 
+
+Autoregressive Logistic Regression Applied to Atmospheric Circulation Patterns” (Guanche, Mínguez & Méndez, 2013). @guanche2014autoregressive
+
+Articel incorporates autoregressive time dependencies into logistic regression for climate modeling. work with complex climatological dynamics instead of common data set like health or business. Explains both interpretation and simulation capabilities for weather patterns.
+
+Data used :  They took data  of measured sea-level pressure (SLP) fields to determine daily atmospheric circulation patterns over the Northeastern Atlantic. A limited number of circulation types (weather regimes) are created by summarizing the SLP fields, for example, through clustering or categorization. Data setup for the autoregressive logistic regression applied to weather types” shows how they organized lagged types, covariates,
+
+Steps on summary: 
+- Sort daily SLP data into distinct circulation categories.
+- create autoregressive terms, covariates, and lagged indicators (trend, seasonal)
+- Comparing anticipated and empirical probability allows for diagnostic checks.
+- Utilize the fitted model to replicate artificial circulatory state sequences.
+- Check for simulation statistics (frequencies, transitions, persistence) against historical data.
+
+## Article 2
+
+A Descriptive Study of Variable Discretization and Cost-Sensitive Logistic Regression on Imbalanced Credit Data. @zhang2020descriptive
+
+Link: https://arxiv.org/pdf/1812.10857 
+
+
+Purpose : The author looks out for a problem related to credit scoring where the minority class (defaults and delinquencies) is comparatively uncommon.
+Their main concept is to contrast cost-sensitive logistic regression (assigning various misclassification fees) with variable discretization (converting continuous predictors into categorical bins) in order to reduce class bias. 
+When used real credit scoring dataset event rate was 6.68% that was highly imbalanced.
+
+Models used:
+- trained logestic regression in different versions   
+- Standard logistic regression on continuous predictors (baseline).
+- Logistic regression on discretized predictors (using different binning strategies).
+- Cost-sensitive logistic regression on the continuous predictors (i.e. weight adjustments for minority class).
+- Possibly combined approaches (discretized + cost-sensitive).
+- They use 10-fold cross-validation to ensure robustness. PMC
+- Performance metrics include:
+- ROC / AUC
+- Type I error (false positive rate)
+- Type II error (false negative rate)
+- Accuracy
+- F1 score
+- They also examine coefficient estimates and interpretability
+
+Summary: 
+
+In their study of unbalanced credit scoring (default rate ~6.68%), Zhang et al. used 10-fold CV to examine standard, discretized, and cost-sensitive logistic regression. They discovered that variable discretization works better than cost-sensitive weighting, producing models that are more resilient, stable, and interpretable. These models also generalize well to other domains, such as biology and wine quality.
+
+### References
+
+::: {#refs}
+:::

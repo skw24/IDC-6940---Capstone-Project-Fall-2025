@@ -1,0 +1,79 @@
+---
+title: "Literature Review Week 5"
+description: "Literature review for the Week 5 of the course IDC-6940 for Fall 2025"
+author:
+  - name: Shree Krishna Basnet
+    # url: https://github.com/renanmb
+    affiliation: Master of Data Science Program @ The University of West Florida (UWF)
+    # affiliation-url: https://ucsb-meds.github.io/
+# date: 10-24-2022
+categories: [literature review, week 5]
+# citation:
+#   url: https://samanthacsik.github.io/posts/2022-10-24-my-blog-post/
+image: images/spongebob-imagination.jpg
+draft: false
+bibliography: references.bib
+link-citations: true
+---
+
+## Article 1
+
+Link: https://jamanetwork.com/journals/jamanetworkopen/fullarticle/2839330 
+
+Prevalence of Clinical Obesity in US Adults Based on a Newly Proposed Definition @park2025prevalence
+
+
+The Lancet Diabetes & Endocrinology Commission has proposed a new definition of clinical obesity that includes evidence of organ malfunction or physiological impairment in addition to direct measures of adiposity.
+
+In order to find populations who might have been incorrectly classified under previous BMI thresholds, the researchers aimed to compare BMI-based obesity with clinical obesity using national data from the United States.
+
+Methodology: 
+
+- Cross-sectional study using NHANES 2017–2018 data (nationally representative, multistage sampling)
+- Analysis: Conducted in Stata 18; weighted percentages with 95% CIs; significance at p<0.05 
+- Guidelines: Followed STROBE reporting standard.
+
+Key points 
+- BMI and Clinical Impact : BMI data is insufficient as it leaves who already experience obesity-related dysfunction.
+- Older adults are more seen in clinical obesity even at lower BMIs = highlights BMI’s limitation in aging populations.
+- Younger, higher-income adults are seen with mostly BMI-only obese: high weight but not yet showing dysfunction.
+- Public health implication: Using the clinical definition could better target interventions (medication, surgery, lifestyle) and identify people at risk earlier.
+
+Summary: 
+Although the overall obesity rates determined by BMI and clinical criteria are comparable, they distinguish distinct populations. The clinical definition emphasizes the significance of early prevention for individuals with preclinical obesity and more accurately reflects the health effects, particularly in older and underprivileged populations.
+
+## Article 2
+
+Benefit-Risk Reporting for FDA-Cleared Artificial Intelligence−Enabled Medical Devices @lin2025benefit
+
+Link: https://jamanetwork.com/journals/jama-health-forum/fullarticle/2839236 
+
+Summary: 
+
+The effectiveness with which FDA-approved AI/ML-enabled medical devices disclose their advantages, hazards, effectiveness, and safety before to and following approval was investigated in this study
+
+Scope: Using FDA records (decision summaries, adverse events, and recalls), 691 AI/ML devices that were approved between 1995 and 2023 were analyzed.
+
+Results:
+
+Key reporting was absent from many devices:
+
+46.7% did not report the study design.
+
+53.3% of the training sample size is missing.
+
+95.5% of demographic information is lacking.
+
+Just 3 devices (<1%) reported patient outcomes, while only 6 devices (1.6%) used randomized clinical trials. Sensitivity (24%), specificity (22%), and other performance indicators were not reported by many.Just 28.2% of devices had safety assessments, and only 8.7% had bias assessments.Adverse events: 489 incidents involving 36 devices (5.2%), comprising 30 injuries, 1 fatality, and 458 malfunctions.40 devices (5.8%) were recalled 113 times, primarily due to software problems.
+
+Trends: 
+
+Although there was a little improvement in the reporting of bias checks, efficacy, and outcomes for devices cleared after 2021, these devices were less likely to have safety evaluations or peer-reviewed publications.
+
+Conclusion: Standardized reporting of risk, safety, and efficacy is lacking in regulatory monitoring of AI/ML medical devices. The study highlights the necessity of an FDA regulatory approach specifically for AI/ML devices.
+more robust postmarket surveillance networks.Increased health fairness and transparency (e.g., improved demographic reporting to prevent prejudice).
+
+### References
+
+::: {#refs}
+:::

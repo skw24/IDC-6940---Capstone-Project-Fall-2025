@@ -1,0 +1,34 @@
+---
+title: "Meet the Group"
+listing:
+  - id: gradstudent
+    include: 
+      people_group: "gradstudent"
+    exclude:
+      external: true
+    sort: last
+    type: grid
+    fields: [title, subtitle, image, education]
+  - id: orientator
+    include: 
+      people_group: "orientator"
+    exclude:
+      external: true
+    sort: last
+    type: grid
+    fields: [title, subtitle, image, education]
+page-layout: full
+---
+
+## Graduate Students
+
+::: {#gradstudent}
+:::
+
+
+## Orientator
+
+::: {#orientator}
+:::
+
+:::{.sand-background}

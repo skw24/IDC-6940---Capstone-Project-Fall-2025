@@ -1,0 +1,54 @@
+---
+title: "About Us"
+---
+
+Welcome to our team! We are a group of collaborators dedicated to...
+
+:::{.column-screen-inset}
+
+:::{.grid}
+
+::: {.g-col-12 .g-col-md-6}
+### Renan Monteiro Barbosa
+#### Data Scientist
+
+![Renan Monteiro Barbosa](images/spongebob-imagination.jpg){.about-image}
+
+Jane is a data scientist with over 10 years of experience...
+
+**Contact**
+* Email: `jane@example.com`
+* GitHub: [github.com/jane](https://github.com/jane)
+:::
+
+::: {.g-col-12 .g-col-md-6}
+### Kristina Kusem
+#### Software Engineer
+
+![Kristina Kusem](images/spongebob-imagination.jpg){.about-image}
+
+John is a software engineer specializing in web development...
+
+**Contact**
+* Email: `john@example.com`
+* Twitter: [@john_smith](https://twitter.com/john_smith)
+:::
+
+::: {.g-col-12 .g-col-md-6}
+### Shree Krishna Basnet
+#### Research Analyst
+
+![Shree Krishna Basnet](images/spongebob-imagination.jpg){.about-image}
+
+Alex works on developing new research methodologies for...
+
+**Contact**
+* Email: `alex@example.com`
+* Website: [alex-johnson.com](https://alex-johnson.com)
+:::
+
+
+
+:::
+
+:::

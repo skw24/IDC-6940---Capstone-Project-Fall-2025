@@ -1,0 +1,89 @@
+---
+title: "Literature Review Week 3"
+description: "Literature review for the Week 3 of the course IDC-6940 for Fall 2025"
+author:
+  - name: Shree Krishna Basnet
+    # url: https://github.com/renanmb
+    affiliation: Master of Data Science Program @ The University of West Florida (UWF)
+    # affiliation-url: https://ucsb-meds.github.io/
+# date: 10-24-2022
+categories: [literature review, week 3]
+# citation:
+#   url: https://samanthacsik.github.io/posts/2022-10-24-my-blog-post/
+image: images/spongebob-imagination.jpg
+draft: false
+bibliography: references.bib
+link-citations: true
+---
+
+## Article 1
+
+Modeling Road Accident Severity with Logistic Regression (comparison study) @chen2020modeling
+
+Link: https://www.mdpi.com/2078-2489/11/5/270 
+
+Goal:  the goial was to understand any major outcomes that would happen  (deaths or serious injuries) or small misfortunes, such as property damage and light casualties,.
+this is exciting research as transportation planners, governments, and law enforcement can make focused safety policies, like stricter enforcement, better road design, or public awareness campaigns, by knowing what factors affect how bad an accident is likely to be, like drunk driving, weather, and time of day.
+
+methods used and approach
+
+dataset: Fatality Analysis Reporting System (FARS)
+predators: 
+Driver demographics (age, gender)
+Environmental factors (weather, road condition, time of day, lighting)
+Driving behaviors (speeding, alcohol involvement, seat belt use)
+Vehicle types (motorcycles, trucks, cars)
+
+to distinguish between severe and non-severe accidents, logistic regression was used.
+To assess trade-offs between interpretability and predictive capability, models were contrasted with gradient boosting machines (GBMs) and decision trees.
+Performance was compared using metrics like accuracy, precision, recall, and AUC.
+Clear, comprehensible patterns were found using logistic regression:
+Severity was greatly worsened by low lighting, inclement weather, and night driving.
+Two of the best indicators of fatal collisions were speeding and alcohol use.
+Compared to other vehicles, motorcycles posed a disproportionately high severity risk.
+The prediction accuracy of tree-based models (GBM) was somewhat greater, but the results of logistic regression were clear and understandable.
+
+there were some bad aspect of the appracoach or lets say disadvantage of technique used as:
+nonlinear interactions are not captured: for example, bad weather and night driving together may have a worse effect than additive driving, but conventional LR ignores this.
+data imbalance- Without corrections, logistic regression may become skewed toward the majority class; severe crashes are less common than non-severe ones.
+
+## Article 2
+
+Predicting Uber Demand Using Spatio-Temporal Features and Logistic Regression (2017) @faghih2019predicting
+
+Link: https://escholarship.org/content/qt80q5f8t9/qt80q5f8t9_noSplash_59a1830fd88a360df43b9c6aff1446c7.pdf 
+
+Goal: to forecast if Uber demand would outpace supply at a specific place and time window (for example, fifteen minutes in advance), resulting in an increase in pricing. Classifying each region for price changewas the classification challenge.
+
+Methodology:
+
+When demand exceeds supply within a zone or period, labels for "surge" events are created.
+surge/no surge classification using a logistic regression model.
+compared the effectiveness of Random Forests with Support Vector Machines (SVMs).
+evaluated on training/test splits using cross-validation.
+
+Result: 
+
+As a baseline model, logistic regression did fairly well, identifying significant demand trends such as
+1. busy hours in the morning and evening.
+2. Manhattan's nightlife during weekends.
+3. weather peaks (demand was greatly raised by rain).
+
+However, logistic regression was marginally outperformed by more sophisticated models (random forest, SVM), particularly when it came to capturing nonlinearities and interactions.
+
+The good aspect of research :  
+
+Interpretability: Coefficients showed which characteristics influenced demand (for example, rainfall significantly raised the likelihood of a surge).
+Low computational cost: LR trained quickly on a sizable NYC dataset, in contrast to more intricate models.
+Scalability: As an early warning system, a straightforward model may be quickly implemented for real-time demand forecasts.
+
+Limitiation or what the analysic could not get right:  
+
+Geographic restrictions: Patterns may not transfer to smaller cities or suburban settings because they were trained in New York City.
+Limitation of binary classification: The model merely forecasted a surge or no surge; however, actual demand is continuous. More good models forecast the magnitude of the surge.
+Poor performance compared to more sophisticated models: Random forest produced higher accuracy by better capturing interactions.
+
+### References
+
+::: {#refs}
+:::

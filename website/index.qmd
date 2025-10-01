@@ -1,0 +1,10 @@
+---
+title: "Logistic Regression Group"
+---
+
+As part of the Fall-2025 Capstone Projects in Data Science (IDC-6940) at University of West Florida (UWF), our team provided a systematic review of logistic regresion models and their applications with focus to healthcare data.
+
+This project was completed under the guidance of Dr. Achraf Cohen ([Achraf Cohen | Dr. Achraf Cohen](https://pages.uwf.edu/acohen/index.html)).
+
+
+

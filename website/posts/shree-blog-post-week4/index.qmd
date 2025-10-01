@@ -1,0 +1,54 @@
+---
+title: "Literature Review Week 4"
+description: "Literature review for the Week 4 of the course IDC-6940 for Fall 2025"
+author:
+  - name: Shree Krishna Basnet
+    # url: https://github.com/renanmb
+    affiliation: Master of Data Science Program @ The University of West Florida (UWF)
+    # affiliation-url: https://ucsb-meds.github.io/
+# date: 10-24-2022
+categories: [literature review, week 4]
+# citation:
+#   url: https://samanthacsik.github.io/posts/2022-10-24-my-blog-post/
+image: images/spongebob-imagination.jpg
+draft: false
+bibliography: references.bib
+link-citations: true
+---
+
+# Article 1
+
+Regularized logistic regression with network‐based pairwise interaction for biomarker identification in breast cancer (Wu et al., 2016) @wu2016regularized
+
+1. Goal: Regularized logistic regression should be used, along with network (biological network) information and pairwise interactions, to find biomarkers (both single and interacting pairs) for breast cancer.
+
+Link: https://www.researchgate.net/publication/296193700_Regularized_logistic_regression_with_network-based_pairwise_interaction_for_biomarker_identification_in_breast_cancer 
+
+What made this paper interesting, or why the analysis is important: different biological processes has combined interactions between genes and proteins rather than single genes or proteins, like network topology or interaction information, which may result in better biomarkers that are biologically useful rather than statistically significant. Associating network knowledge may improve prediction or interpretability.
+
+Methodology: The analyst used a regularized logistic regression model that incorporates pairwise connections and protein-protein interaction (PPI) networks.
+they prioritized biologically plausible biomarker combinations and used an adaptive elastic net (a penalty that balances l1 and l2) with network constraints.
+Used breast cancer datasets (gene expression data) to discover key nodes and relationships.
+
+Result/conclusion: Their model outperforms simpler models in terms of predictive performance, and they were able to discover both individual biomarkers and interacting gene pairs. The interactions has been found to have some biological sense. 
+
+Limitation: The risk of overfitting and model size are increased by the intricacy of incorporating relationships. The quality of the network and expression data determines the outcomes.
+
+## Article 2
+
+Using Genetic Algorithms and Sparse Logistic Regression to Find Gene Signatures for Chemosensitivity Prediction in Breast Cancer. @hu2016using
+
+Goal: To identify "gene signatures" that predict chemosensitivity, that is, which tumors react to chemotherapy in breast cancer, combine genetic algorithms with sparse logistic regression.
+
+What made this paper interesting, or why the analysis is important:Predicting which patients will react to chemotherapy gives more personalized treatment. Potential biomarkers include gene signatures. However, there are several genes and possible combinations, like genetic algorithms that aid in searching space, while sparse logistic regression aids in reducing characteristics. 
+
+Methodology: To create individuals' "gene signature" subsets, first choose genes using a Genetic Algorithm (GA) from among overexpressed genes (or pathway-specific genes) and  forecast response, create sparse logistic regression models using those subsets. Assess accuracy, sensitivity, specificity, and other metrics using both a training and a validation set.
+
+Result/ Conclusion : The results show that SLR-28 and Notch-86, two gene signatures, perform well on training and validation sets in terms of accuracy, specificity, sensitivity, and other metrics.  In some reults we can see  it performs better than previous signatures. 
+
+Limitation:  Generalization is uncertain due to the relatively small datasets. Randomness is added by the GA, signature stability may differ. Clinical validation also comes at a high expense. overfitting risk.
+
+### References
+
+::: {#refs}
+:::

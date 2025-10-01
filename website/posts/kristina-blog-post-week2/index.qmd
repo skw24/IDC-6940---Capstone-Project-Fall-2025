@@ -1,0 +1,68 @@
+---
+title: "Literature Review Week 2"
+description: "Literature review for the Week 2 of the course IDC-6940 for Fall 2025"
+author:
+  - name: Kristina Kusem
+    # url: https://github.com/renanmb
+    affiliation: Master of Data Science Program @ The University of West Florida (UWF)
+    # affiliation-url: https://ucsb-meds.github.io/
+# date: 10-24-2022
+categories: [literature review, week 2]
+# citation:
+#   url: https://samanthacsik.github.io/posts/2022-10-24-my-blog-post/
+image: images/spongebob-imagination.jpg
+draft: false
+bibliography: references.bib
+link-citations: true
+---
+
+## Article 1
+
+Article title: Understanding logistic regression analysis @sperandei2014understanding
+
+Data used:
+Synthetic data about the effect of a drug treatment. There are two treatments: standard and new drug treatments. Shows a binary outcome, either died or survived after drug treatment. 
+
+Problem: 
+The problem introduced in this article is needing a method to study the joint relationship between two or more predictors and the target variable. One way to solve this problem is to calculate a weighted odds ratio that accounts for all the relationships and predictors. However, as the number of predictors increases, weighted odds ratio calculations can become very complicated. Also, these calculations require only categorical variables as input and no continuous variables may be used. A solution to this problem is to use logistic regression. 
+
+Solution to problem:
+- Article explains what logistic regression is useful for. Advantages are that it can be used when there are more than two predictors and we want to analyze how they all simultaneously affect the target variable. Also useful for when we have any number of continuous predictors.
+- Gives the logistic regression model equation and explains the meaning of all variables (intercept, slops, and symbols). The outcome in the model (left hand side of equation) is the log of the odds. The paper goes into detail about how to interpret coefficients in the model; you must take the exponentials of the coefficients to understand the chances (the probability) of an event happening (the event in this paper is death).
+
+Limitations:
+- Differences between odds, odds ratios, and probabilities are discussed. Understanding the differences is key to interpreting results, and if you do not understand the differences, you cannot easily interpret the output of a logistic regression model.
+- If there is a predictor with more than two levels, you must create n-1 dummy variables for n number of categories within the predictor. This is considered a limitation because dataset manipulation must be done prior to constructing a model. 
+- Interpreting coefficients of continuous variables is explained. It is different than interpreting coefficients of categorical variables. Interpreting these results can be complicated and should be done carefully. Exponential of the coefficient of a continuous variable is the chance of an event happening in relation to one unit of the continuous predictor.
+- Models with too many predictors can be too saturated, and researchers may miss associations. An association may be present, but the model will not have enough statistical power with too many predictors. Solution: build a model with less predictors. You can start with all predictors and drop one at a time, or start with 0 predictors and add one at a time (keeping only the most important predictors). Starting with a full model is better.
+- A way to test the importance of each variable is to create a univariate model for each individual predictor at a time to see which are most strongly correlated with the outcome.
+- How to choose the reference group is explained. Usually, the reference group is the lowest level or the highest level in a group of ordered categories. But if there is no order to the categories then there may be no clear reference group. Results vary when choosing differing reference groups.
+
+Result:
+The researchers conclude by stating that logistic regression is a very powerful and useful way to analyze epidemiologic data. 
+
+## Article 2
+
+Article used: Binary logistic regression analysis of factors affecting urban road traffic safety. @chen2024binary
+
+Problem:
+The introduction features a literature review establishing relevance of the topic. Several studies about traffic accidents are discussed and cited. Traffic accidents are becoming more common as traffic increases due to population increases. Researchers aim to find which factors in traffic are more closely associated with the occurrence of traffic accidents. 
+
+Solution:
+The researchers use a binary logistic regression model to study which factors are more correlated to the occurrence of traffic accidents. The advantages of a binary logistic regression are discussed. Logistic regression allows researchers to make predictions about probability of a dependent variable being sorted into a certain class. Logistic regression also allows for the researchers to determine which predictors more significantly impact the outcome variable. 
+To set up the study, researchers defined the dependent variable, y, as a binary outcome of either no accident (value of 0) or presence of an accident (value of 1). The independent variables are defined as 25 factors that are grouped under four categories consisting of environmental factors, driver attributes, road attributes, and vehicle factors. Before analyzing the data, it was preprocessed to eliminate outliers, normalize all predictor values to similar scales, eliminate redundancy, Then, the predictors were run through a multicollinearity test to determine if any needed to be excluded from the model; none of the factors showed significant multicollinearity and all 25 were kept in the model. The calculation used for collinearity involved the correlation coefficient, R, tolerance (T), and variance inflation factor (V).
+
+Results:
+A binary logistic regression model was fitted to the data, and it was found that the model fit well. To assess the goodness of fit, the determination coefficient, R^2, value was calculated. 
+The strongest predictors of a traffic incident were found to be driver behavior, weather, road conditions, and lighting. 
+
+Limitations:
+The paper states that research in this area can be improved by using real- time data about weather, road conditions, and driver status. Using data as it occurs in real time may help make better predictions about traffic safety risks.
+
+Dataset:
+The original data was sourced from the International Transport Forum with 5350 datapoints. After data preprocessing, the data was reduced to 3500 data points. 
+
+### References
+
+::: {#refs}
+:::

@@ -1,0 +1,34 @@
+---
+title: &TITLE Name
+last: 
+first: 
+people_group: "gradstudent | orientator"
+email: 
+education:
+  - deg | inst  <br> 
+subtitle: "Postdoctoral Fellow | Graduate Student, dept "
+description: ""
+image: avatar.jpg
+page-layout: full
+about: 
+  id: about
+  template: trestles
+  image-shape: round
+  image: avatar.jpg
+  links:
+    - icon: envelope
+      text: Email
+      href: mailto:email@example.org
+---
+
+<hr>
+
+:::{#about}
+
+
+## Education
+{{< meta education >}}
+
+<br>
+
+

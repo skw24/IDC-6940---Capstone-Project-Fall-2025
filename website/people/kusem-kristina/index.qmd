@@ -1,0 +1,32 @@
+---
+title: &TITLE Kristina Kusem
+first: Kristina
+last: Kusem
+people_group: gradstudent
+education: B.S. Mechanical Engineering | Univevrsity of West Florida
+email: "kck21@students.uwf.edu"
+subtitle: Graduate Student, Masters Data Science
+image: avatar.jpg
+page-layout: full
+about: 
+  id: about
+  template: trestles
+  image-shape: round
+  image: avatar.jpg
+  links:
+    - icon: envelope
+      text: Email
+      href: mailto:kck21@students.uwf.edu"
+---
+
+<hr>
+
+
+:::{#about}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+## Education
+{{< meta education >}}
+
+<br>

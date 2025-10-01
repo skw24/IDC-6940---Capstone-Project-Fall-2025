@@ -1,0 +1,34 @@
+project:
+  type: website
+
+website:
+  title: "IDC-6940 - Capstone Project Fall-2025"
+  navbar:
+    tools:
+      - icon: github
+        href: https://capstone4ds.github.io/
+    left:
+      - href: index.qmd
+        text: Home
+      - href: report.qmd
+        text: Report
+      - href: blog.qmd
+        text: Literature Review
+      # - href: about.qmd
+      #   text: About Us
+      - href: people/index.qmd
+        text: About Us
+
+format:
+  html:
+    theme:
+      light: flatly
+      dark: darkly
+      # light: [flatly, theme.scss]
+      # dark: [flatly, theme-dark.scss]
+    css: styles.css
+    toc: true
+
+csl: national-library-of-medicine.csl 
+
+

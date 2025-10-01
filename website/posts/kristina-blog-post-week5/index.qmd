@@ -1,0 +1,101 @@
+---
+title: "Literature Review Week 5"
+description: "Literature review for the Week 5 of the course IDC-6940 for Fall 2025"
+author:
+  - name: Kristina Kusem
+    # url: https://github.com/renanmb
+    affiliation: Master of Data Science Program @ The University of West Florida (UWF)
+    # affiliation-url: https://ucsb-meds.github.io/
+# date: 10-24-2022
+categories: [literature review, week 5]
+# citation:
+#   url: https://samanthacsik.github.io/posts/2022-10-24-my-blog-post/
+image: images/spongebob-imagination.jpg
+draft: false
+bibliography: references.bib
+link-citations: true
+---
+
+## Article 1
+
+Article Title: Identification of factors influencing severity of motorcycle crashes in Dhaka, Bangladesh using binary logistic regression model. @rahman2021identification
+
+Authors: Hamidur Rahman, Niaz Mahmud Zafri, Tamanna Akter, Shahrior Pervaz
+
+Problem:
+- One of the most common unnatural causes of death across the world is road accidents, so it is important to identify strong predictors associated with such accidents.
+- According to the World Health Organization, most of the road crash deaths that occur worldwide happen in developing countries. 
+- Researchers focus on motorcycle crashes in Dhaka, the capital city of Bangladesh. It is stated that the rate of road crashes in Bangladesh is significantly greater than other developing countries, and Dhaka has the greatest amount of motorists and reported motorcycle crashes.
+- It is noted that most research about this topic is done on data from developed countries and not developing countries. So the conclusions drawn from existing studies may not be applicable to the problems the developing countries are facing
+- Knowing which predictors are strongly associated with motorcycle crashes in Dhaka helps builders and developers eliminate or reduce these risk factors as they are building new roads. This study serves as a step in preventing more motorcycle road crashes as developing countries are being built. 
+
+Solution:
+- Researchers conduct a binary logistic regression analysis to identify predictors most strongly associated with the occurrence of the outcome, motorcycle crash severity (fatal/ non- fatal)
+- They began the study by choosing predictors identified in previous literature about similar topics. Commonly identified predictors of motorcycle crashes are grouped into five broad categories: environment, road characteristics, driver characteristics, motorcycle features, and type of collision.
+- The binary logistic regression equation is given as the log odds of the probability of the occurrence of the outcome. An explanation of every variable in the equation is given (slopes, intercept, odds ratio, and relation to the outcome variable).
+
+Data:
+- Data was collected from 2006 to 2015 from the Accident Research Institute of Bangladesh University of Engineering and Technology. Only 316 data points were used, and each contained information about motorcycle crashes. 
+- There are five broad categories encompassing all predictors. The five categories and predictors are:
+    1. Environmental factors- date/time, lighting, weather
+    2. Collision type- five different types of collisions
+    3. Driver characteristics- gender, age, alcohol consumption, and use of a helmet
+    4. Road characteristics-location, traffic characteristics, road conditions
+    5. vehicle characteristics- type of other vehicle in crash, weight of other vehicle in crash, motorcycle condition, and more 
+- The outcome variable, crash injury severity, originally had four levels. Observations from this predictor were then reclassified as either “fatal” or “non-fatal” for a binary outcome.
+- To determine which predictors to include in the dataset, researchers conducted a univariate analysis and a chi- square test of each individual predictor to assess significance. All significant predicators were then chosen for the dataset, used for the binary logistic regression. After this, multicollinearity was assessed using the VIF and none of the predictors showed multicollinearity.
+
+Results/ Conclusions:
+- After conducting the binary logistic regression, 11 out of the 16 included predictors were found to be significantly associated with the outcome. The significant predictors were day of the week, seasonal condition, time of day, three types of road characteristics, crash type, condition of motorcycle, type of other vehicle in accident, use of helmet, and alcohol consumption
+- The regression curve from the analysis was also found to be significant
+- Goodness of fit was assessed using a test called the Hosmer and Lemeshow test
+- The discussion section details each significant predictor, and interpretations of slopes are given in relation to the outcome variable and the reference groups. 
+- Some of the findings were consistent with other studies, and some of the findings contradict conclusions in previous studies.
+- Most notable conclusions from this study that researchers believe would improve road safety and reduce motorcycle accident severity in developing countries:
+    1. better lighting conditions for enhanced visibility
+    2. solution to wet/ slippery roads during rainy season
+    3. educate drivers about how to drive during unsafe conditions, such as nighttime, heavy rain, and heavy traffic on weekends. Also educate drivers to follow proper safety and speeding regulations. And better education/ training/ evaluation for drivers operating larger vehicles 
+    4. improved pedestrian walkways and road areas
+    5. strict enforcement of laws regarding helmet use and alcohol while driving
+Limitations:
+- Missing information in the data: Some important predictors were entirely excluded from the study due to missing information in the dataset. So there may be some extremely relevant predictors that have yet to be studied. There is also an ongoing issue of accidents that go unreported due to lack of fatality, and drivers do not report these incident. 
+
+## Article 2
+
+Title of article: Risk factors for airplane headache: A multivariate logistic regression analysis in a population of career flight personnel. @prottengeier2025risk
+
+Authors: Johannes Prottengeier, Isabelle Kaiser, Andreas Moritz, Fabian Konrad
+
+Problem:
+- Airplane headache (AH) is a headache disorder described as a headache induced while taking off or landing in an airplane. It was not until 2004 that the disorder was recognized and classified as a medical issue. Because this disorder has just recently been recognized, there is little existing research on it.
+- There is a lot of previous literature and research regarding other headache types and disorders, but AH is still lacking appropriate research.
+- Specifically, this study aims to identify predictors and risk factors that occur before onset of airplane headache. Knowing the predictors would help both travelers and employees of airlines. 
+- AH is a common disorder affecting about 65 million people worldwide every year, so helping prevent and treat it is crucial. Future research is therefore a must.
+
+Solution:
+- Conduct a logistic regression analysis to determine significant predictors of airplane headache. Two binary logistic regression models were constructed; one model’s outcome was either airplane headache (1) or no headache (0), and the other model’s outcomes were airplane headache (1) or other headache (0). 
+- Used R to conduct statistical analysis
+
+Data:
+- Data was collected from a voluntary online survey sent out to about 20,000 pilots who fly frequently due to work. A total of 2237 complete questionnaires from a 3 month period in 2014 were received and used in the dataset for this study. 
+- The data/ questions in the survey were determined by pain specialists
+- Predictors included in the survey were: demographic information, health history, substance use, medication use, stress levels, and headache/ physical symptoms while flying.
+- The outcome variable was divided into three categories: airplane headache, no headache, and other type of headache.
+- Predictors were tested for multicollinearity before models were constructed
+- Data was further reduced using stepwise backward elimination (starting with all predictors and then eliminating least significant predictors)
+
+Results/ Conclusions:
+- Survey results revealed that a vast majority of participants said they had some form of headache while flying on an airplane (82%)
+- The first model comparing airplane headache with no headache was found to have 10 significant predictors. The AUC for this model showed that it had strong predictive power.
+- The second model comparing airplane headache with other headache was found to have only four significant predictors. The AUC also showed that this model had low predictive power. This is likely attributed to the fact that airplane headache and other types of headaches all have similar predictors, so it is not easy to distinguish between strong predictors for just AH as compared to all types of headaches.
+- Conclusions: supplementing with folic acid before flight may help reduce risk of airplane headache. Other strong predictors of airplane headache are occupation, work stress, and preexisting headache medical conditions.
+- Further research about airplane headache is necessary because of all the ongoing negative subsequent events caused by it. It causes people loss of productivity, avoidance behaviors, stress, and anxiety.
+
+Limitations:
+- Only 12% of surveyed individuals submitted their survey. It could be the case that only the people who suffered from headaches responded to the survey, so the proportions of individuals with airplane headache in this study are not representative of the entire population. This is called positive selection bias.
+- Participants in the survey may not be reporting accurate information because a lot of time passes between the event of their airplane travel and the time when they take the survey.
+
+### References
+
+::: {#refs}
+:::

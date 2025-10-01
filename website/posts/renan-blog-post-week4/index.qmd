@@ -1,0 +1,54 @@
+---
+title: "Literature Review Week 4"
+description: "Literature review for the Week 4 of the course IDC-6940 for Fall 2025"
+author:
+  - name: Renan monteiro barbosa
+    url: https://github.com/renanmb
+    affiliation: Master of Data Science Program @ The University of West Florida (UWF)
+    # affiliation-url: https://ucsb-meds.github.io/
+# date: 10-24-2022
+categories: [literature review, week 4]
+# citation:
+#   url: https://samanthacsik.github.io/posts/2022-10-24-my-blog-post/
+image: images/spongebob-imagination.jpg
+draft: false
+bibliography: references.bib
+link-citations: true
+---
+
+This week I review 2 articles
+
+## Article 1
+
+[Incorporating LLM Priors into Tabular Learners](https://huggingface.co/papers/2311.11628). @zhu2023incorporatingllmpriorstabular
+
+There have been implementations of transformer based architectures for tabular data. Most of the time it has been utilized for generating synthetic data for likelihood free models or for cases where there is not enough data for fitting a model.
+
+The goal of this research was to bootstrap a way so one could use off the shelf models like Chatgpt which are really good at generalization to perform similarly to dedicated models trained on tabular data such as tabLLM. This is important because it is fairly cheaper and more accessible than training a model from scratch and it overcomes the complexities of developing a specialized encoder.
+
+The methodology is a pretty hacky solution where they serialized the tabular data so they could prompt the models are are just trying to obtain back a categorization through prompt engineering which will be attributed a value which is manually tuned by the authors and this value is later used on the Monotonic Logistic Regression.
+
+The limitations are quite clear. There is no way to guarantee the black box model output will be consistent. You have to manually categorize and do some prompt engineering. The model has bias so it either works really well or it doesn't.
+
+The bright side is that this approach is extremely cheap and is accessible. It can be used to test ideas and hypothesis as well rapidly prototype before committing to a more definite solution such as tabLLM.
+
+## Article 2
+
+[Using a monotonic density ratio model to increase the power of the goodness-of-fit test for logistic regression models with case-control data](https://onlinelibrary.wiley.com/doi/10.1002/sim.10183?af=R). @wang2024using
+
+Case-control sampling is used because it is a quick, economical, and efficient method for studying rare diseases or outcomes, long latent periods, or outbreaks. It allows researchers to investigate multiple potential risk factors simultaneously for a single outcome and is especially useful when prospective cohort studies are not feasible.
+
+The author's goal seems to be to improve the statistical power of the goodness-of-fit test for logistic regression models when used with case-control data. They improved upon a previous popular method from Qin and Zhang, instead of using the nonparametric empirical distribution function, we use the constrained nonparametric MLE of G(x) to further improve the power performance of the Kolmogorov-Smirnov-type goodness-of-fit test for logistic models.
+
+Before drawing conclusions from a logistic regression model, it's crucial to verify that the model's assumptions hold true for the data and there are many limitations. Case Study data is specially complicated because there is not enough data and there are too many unknowns.
+
+The authors spare no comments on the limitations, the bigger limitations are:
+- The test is designed for goodness-of-fit and cannot be used to compare two different logistic regression models
+- The test has no power when the only covariate is categorical. In this situation, the logistic model is "saturated," meaning it perfectly fits the data by definition and cannot be misspecified.
+
+Their results are overall quite interesting as they demonstrated that they could bootstrap an algorithm that is quite clever and intuitively it shouldn't work. It is a hard problem to solve so it is interesting out of the box thinking
+
+### References
+
+::: {#refs}
+:::

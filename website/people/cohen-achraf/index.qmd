@@ -1,0 +1,34 @@
+---
+title: &TITLE Achraf Cohen
+first: Achraf
+last: Cohen
+people_group: orientator
+education: PhD in Applied Mathematics/Statistics | University of Angers, France
+email: "acohen@uwf.edu"
+subtitle: Associate Professor of Statistics/Data Science
+image: avatar.jpg
+page-layout: full
+about: 
+  id: about
+  template: trestles
+  image-shape: round
+  image: avatar.jpg
+  links:
+    - icon: envelope
+      text: Email
+      href: mailto:acohen@uwf.edu"
+---
+
+<hr>
+
+
+:::{#about}
+
+I’m [Achraf Cohen | Dr. Achraf Cohen](https://pages.uwf.edu/acohen/index.html) I am a statistician who loves collaborative work, and educating students about statistics and data science. Some of the best statistical ideas were originated from practical problems and situations.
+
+## Education
+{{< meta education >}}
+
+<br>
+
+

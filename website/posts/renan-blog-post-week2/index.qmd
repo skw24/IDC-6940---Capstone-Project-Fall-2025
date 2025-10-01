@@ -1,0 +1,38 @@
+---
+title: "Literature Review Week 2"
+description: "Literature review for the Week 2 of the course IDC-6940 for Fall 2025"
+author:
+  - name: Renan monteiro barbosa
+    url: https://github.com/renanmb
+    affiliation: Master of Data Science Program @ The University of West Florida (UWF)
+    # affiliation-url: https://ucsb-meds.github.io/
+# date: 10-24-2022
+categories: [literature review, week 2]
+# citation:
+#   url: https://samanthacsik.github.io/posts/2022-10-24-my-blog-post/
+image: images/spongebob-imagination.jpg
+draft: false
+bibliography: references.bib
+link-citations: true
+---
+
+This week I review 2 articles
+
+## Article 1
+
+[From Logistic Regression to the Perceptron Algorithm: Exploring Gradient Descent with Large Step Sizes](https://huggingface.co/papers/2412.08424). @tyurin2024logisticregressionperceptronalgorithm
+
+The author presents some interesting findings that by connecting Logistic regression with gradient descent there is a link with the perceptron algorithm. With really large steps it acts like a perceptron which in some sense links it back to the Deep Equilibrium networks study.
+This paper is interesting because it is counter intuitive and brings a lot of things to reflect about classification and optimization theory.
+
+## Article 2
+
+[Large Language Model Confidence Estimation via Black-Box Access](https://huggingface.co/papers/2406.04370). @pedapati2025largelanguagemodelconfidence
+
+This paper addresses the problem of estimating the confidence of large language model (LLM) outputs when only black-box (query-only) access is available. It is a simple technique that uses Logistic Regression to classify and validate the confidence of the outputs. The problem of using the black-box models is that there is no control over the model itself, but in some cases the benefits and the value of buying these services that provide a black-box model outweighs training your own custom so this is a framework that attempts to overcome the challenges.
+
+### References
+
+::: {#refs}
+:::
+

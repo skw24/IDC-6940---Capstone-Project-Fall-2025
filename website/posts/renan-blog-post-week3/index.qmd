@@ -1,0 +1,69 @@
+---
+title: "Literature Review Week 3"
+description: "Literature review for the Week 3 of the course IDC-6940 for Fall 2025"
+author:
+  - name: Renan monteiro barbosa
+    url: https://github.com/renanmb
+    affiliation: Master of Data Science Program @ The University of West Florida (UWF)
+    # affiliation-url: https://ucsb-meds.github.io/
+# date: 10-24-2022
+categories: [literature review, week 3]
+# citation:
+#   url: https://samanthacsik.github.io/posts/2022-10-24-my-blog-post/
+image: images/spongebob-imagination.jpg
+draft: false
+bibliography: references.bib
+link-citations: true
+---
+
+This week I review 2 articles
+
+## Article 1
+
+[BERT or FastText? A Comparative Analysis of Contextual as well as Non-Contextual Embeddings](https://huggingface.co/papers/2411.17661). @shanbhag2025noncontextualbertfasttextcomparative
+
+My personal opinion:
+This research doesn't explicitly state why Logistic Regression is important, but it did use it as the classifier for all of the experiments to maintain methodological simplicity. All embeddings were passed to a multinomial logistic regression (MLR) classifier for classification into target labels. Which shows the versatility of logistic regression when elaborating an experiment to test a hypothesis.
+
+The main goal of the paper is to analyze the effectiveness of non-contextual embeddings from BERT models (MuRIL and MahaBERT) and FastText models (IndicFT and MahaFT) for NLP tasks. The authors compare these embeddings to contextual and compressed variants of BERT  aiming to fill a research gap, because previous research did not explore non-contextual embeddings.
+
+The research is important because it addresses the challenges faced by NLP in
+low-resource languages (The ones that lack big annotated datasets to properly train). The selection of an effective embedding method is extremely important for strong NLP performance. The research tries a promising alternative, non-contextual BERT embeddings, which can be obtained through a simple table lookup, unlike contextual embeddings that require a full forward pass through the model. This is particularly relevant for getting model performance with much better computational efficiency.
+
+The methodology is quite interesting. For the FastText, which is a non-contextual embedding by default, they had to create a custom vocabulary. Which was achieved by concatenating the training and validation datasets and then passing them through a text vectorizer, which generated vectors for every word in the dataset. The vectorizer returned the vocabulary as a list of words in decreasing order of their frequency. Then the FastText model was then loaded using the FastText library, and for each word in the vocabulary, a word vector was retrieved to construct the embedding matrix. For each sentence, the text was split into individual words, and the corresponding embeddings were retrieved from the embedding matrix. These embeddings were then averaged to produce the final sentence embeddings. 
+
+Furthermore they did not stop with FastText, they also experimented with compressed embeddings by reducing the dimensionality from 768 (the traditional BERT embedding dimension) to 300. This compression was performed using Singular Value Decomposition (SVD) to select the most relevant features, extracting the top 300 components for all the combinations of contextual as well as non-contextual for MahaBERT as well as Muril. 
+
+In this approach it's interesting how they did use Logistic regression for simplicity. All embeddings were then passed to a multiple logistic regression(MLR) classifier for classification into target labels.
+
+I understood that as a result they did show that contextual BERT embeddings perform better than non-contextual ones, including both non-contextual BERT embeddings and FastText. 
+So in the end they proved that their approach did not improve much or provided much resource to support this different approach.
+They also showed that when non-contextual BERT embeddings are compressed, their performance drops, and FastText performs better than compressed noncontextual BERT. But this is a questionable finding.
+
+The limitations of the research is that even in most cases it was apparent that compression lowers the performance of non-contextual BERT embeddings. The effect of compression on contextual embeddings varies across datasets and there is no consistent way to properly derive conclusions.
+
+## Article 2
+
+[Priority prediction of Asian Hornet sighting report using machine learning methods](https://huggingface.co/papers/2107.05465). @Liu_2021
+
+The goal of the research is to create an automated system to predict the priority of Asian giant hornet sighting reports. Asian giant hornets are an invasive species that poses a significant threat to native bee populations and local beekeeping, as well as to public safety due to their aggressive nature and potent venom. So it's very important that reports are properly assessed for priority.
+
+The authors did model the priority prediction of sighting reports as a two-classification problem. This approach was pretty clever and simple. The goal was to just classify reports as either a "true positive" or a "false positive".
+
+Their methodology is a straightforward application of logistic regression with feature extraction. They came to realize that they needed Location Feature, Time Feature, Image Feature, Text Feature.
+
+Location Feature considers the probability of a hornet being observed at a specific location based on known hornet migration patterns and habits.
+Time Feature accounts for the hornet's seasonal behavior. Since hornets are most active from April to December, a report submitted during this period is more likely to be positive.
+Image Feature is the number of images attached to a report and they came to notice that it is correlated with the increase of its credibility. 
+Text Feature is the textual description's length and keywords. A longer text is considered more credible because it contains more evidence. The model also uses a specific dictionary of hornet characteristics to identify relevant keywords.
+
+They then used a weighted binary cross-entropy function and the logistic regression is just mapping the probability given the feature vector.
+
+The model achieved an average prediction accuracy of 83.5% on positive reports with the best weighting parameter settings, but still far from other works which achieved about 93% using Deep Learning. So this is the main limitation, still needs a lot of improvement or maybe it will never outmatch other methods due to hidden limitations.
+
+My opinion on this paper is that the Logistic Regression has interesting properties, after all it is a generalized linear model, which conducts mapping from any real number to probability values.
+
+### References
+
+::: {#refs}
+:::
