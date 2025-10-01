@@ -3,8 +3,8 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'website/_site/*'
+    # paths:
+    #   - 'website/_site/*'
 
 jobs:
   build-deploy:
