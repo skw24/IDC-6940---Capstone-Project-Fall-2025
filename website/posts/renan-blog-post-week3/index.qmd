@@ -7,7 +7,7 @@ author:
     affiliation: Master of Data Science Program @ The University of West Florida (UWF)
     # affiliation-url: https://ucsb-meds.github.io/
 # date: 10-24-2022
-categories: [literature review, week 3]
+categories: [literature review, week 3, renan]
 # citation:
 #   url: https://samanthacsik.github.io/posts/2022-10-24-my-blog-post/
 image: images/spongebob-imagination.jpg
