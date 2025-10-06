@@ -20,7 +20,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libfontconfig1-dev libfreetype6-dev
+          sudo apt-get install -y libfontconfig1-dev libfreetype6-dev libharfbuzz-dev libfribidi-dev
 
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
@@ -29,6 +29,25 @@ jobs:
         uses: r-lib/actions/setup-r@v2
         with:
           r-version: '4.5.1'
+      
+      - name: Install getsysreqs and dependencies
+        run: |
+          install.packages("remotes")
+          remotes::install_github("r-hub/sysreqs")
+        shell: Rscript {0}
+
+      - name: Install system dependencies
+        run: |
+          sysreqs=$(Rscript -e "cat(getsysreqs::sysreq_commands('DESCRIPTION', platform = 'ubuntu', release = '20.04'))")
+          if [ ! -z "$sysreqs" ]; then
+            echo "Installing system requirements: $sysreqs"
+            sudo apt-get update -y
+            sudo apt-get install -y --no-install-recommends $sysreqs
+          else
+            echo "No system requirements found."
+          fi
+        shell: bash
+
       # Need to setup to use RENV
       - name: Setup RENV
         uses: r-lib/actions/setup-renv@v2
@@ -36,14 +55,14 @@ jobs:
           working-directory: website
           # profile: '"shiny"'
      
-      - name: install dependencies
-        uses: r-lib/actions/setup-r-dependencies@v2
-        with:
-          packages:
-            any::knitr
-            any::rmarkdown
-            any::downlit
-            any::xml2
+      # - name: install dependencies
+      #   uses: r-lib/actions/setup-r-dependencies@v2
+      #   with:
+      #     packages:
+      #       any::knitr
+      #       any::rmarkdown
+      #       any::downlit
+      #       any::xml2
 
       - name: Render and Publish
         uses: quarto-dev/quarto-actions/publish@v2
