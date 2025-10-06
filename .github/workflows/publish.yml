@@ -22,7 +22,13 @@ jobs:
         with:
           r-version: '4.5.1'
       # Need to setup to use RENV
-      - uses: r-lib/actions/setup-r-dependencies@v2
+      - name: Setup RENV
+        uses: r-lib/actions/setup-renv@v2
+        # with:
+        #   profile: '"shiny"'
+     
+      - name: install dependencies
+        uses: r-lib/actions/setup-r-dependencies@v2
         with:
           packages:
             any::knitr
