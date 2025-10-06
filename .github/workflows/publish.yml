@@ -24,8 +24,9 @@ jobs:
       # Need to setup to use RENV
       - name: Setup RENV
         uses: r-lib/actions/setup-renv@v2
-        # with:
-        #   profile: '"shiny"'
+        with:
+          working-directory: website
+          # profile: '"shiny"'
      
       - name: install dependencies
         uses: r-lib/actions/setup-r-dependencies@v2
