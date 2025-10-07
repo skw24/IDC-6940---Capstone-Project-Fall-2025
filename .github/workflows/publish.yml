@@ -40,6 +40,7 @@ jobs:
 
       - name: Install system dependencies
         run: |
+          cd website
           sysreqs=$(Rscript -e "cat(getsysreqs::get_sysreqs('renv.lock',distribution = 'ubuntu', release = '22.04'))")
           if [ ! -z "$sysreqs" ]; then
             echo "Installing system requirements: $sysreqs"
@@ -49,8 +50,6 @@ jobs:
             echo "No system requirements found."
           fi
         shell: bash
-        with:
-          working-directory: website
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
