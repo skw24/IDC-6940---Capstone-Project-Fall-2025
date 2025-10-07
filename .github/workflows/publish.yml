@@ -48,6 +48,8 @@ jobs:
             echo "No system requirements found."
           fi
         shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Need to setup to use RENV
       - name: Setup RENV
