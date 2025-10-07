@@ -33,12 +33,13 @@ jobs:
       - name: Install getsysreqs and dependencies
         run: |
           install.packages("remotes")
-          remotes::install_github("r-hub/sysreqs")
+          remotes::install_github("mdneuzerling/getsysreqs")
         shell: Rscript {0}
 
       - name: Install system dependencies
         run: |
-          sysreqs=$(Rscript -e "cat(getsysreqs::sysreq_commands('DESCRIPTION', platform = 'ubuntu', release = '20.04'))")
+          cd website
+          sysreqs=$(Rscript -e "cat(getsysreqs::get_sysreqs("renv.lock",distribution = "ubuntu", release = '22.04'))")
           if [ ! -z "$sysreqs" ]; then
             echo "Installing system requirements: $sysreqs"
             sudo apt-get update -y
