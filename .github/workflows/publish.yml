@@ -35,6 +35,8 @@ jobs:
           install.packages("remotes")
           remotes::install_github("mdneuzerling/getsysreqs")
         shell: Rscript {0}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install system dependencies
         run: |
