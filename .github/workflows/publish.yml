@@ -41,7 +41,7 @@ jobs:
       - name: Install system dependencies
         run: |
           cd website
-          sysreqs=$(Rscript -e "cat(getsysreqs::get_sysreqs("renv.lock",distribution = "ubuntu", release = '22.04'))")
+          sysreqs=$(Rscript -e "cat(getsysreqs::get_sysreqs('renv.lock',distribution = 'ubuntu', release = '22.04'))")
           if [ ! -z "$sysreqs" ]; then
             echo "Installing system requirements: $sysreqs"
             sudo apt-get update -y
