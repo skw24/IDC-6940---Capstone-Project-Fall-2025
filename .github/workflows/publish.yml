@@ -10,9 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    
     env:
-      R_LIBS_USER: ~/.R/library
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      R_LIBS_USER: ~/.R/library
+   
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -30,6 +32,15 @@ jobs:
         with:
           r-version: '4.5.1'
       
+      - name: Create user R library
+        run: mkdir -p $R_LIBS_USER
+      
+      - name: Install getsysreqs
+        run: |
+          Rscript -e "install.packages('remotes', repos='https://cloud.r-project.org')"
+          Rscript -e ".libPaths(c(Sys.getenv('R_LIBS_USER'), .libPaths())); remotes::install_github('mdneuzerling/getsysreqs')"
+          Rscript -e ".libPaths(c(Sys.getenv('R_LIBS_USER'), .libPaths())); library(getsysreqs); packageVersion('getsysreqs')"
+
       - name: Install getsysreqs and dependencies
         run: |
           install.packages("remotes")
@@ -40,8 +51,10 @@ jobs:
 
       - name: Install system dependencies
         run: |
-          cd website
-          sysreqs=$(Rscript -e "cat(getsysreqs::get_sysreqs('renv.lock',distribution = 'ubuntu', release = '22.04'))")
+          Rscript -e ".libPaths(c(Sys.getenv('R_LIBS_USER'), .libPaths())); \
+            sysreqs <- getsysreqs::get_sysreqs('website/renv.lock', distribution='ubuntu', release='22.04'); \
+            cat(sysreqs)"
+          sysreqs=$(Rscript -e ".libPaths(c(Sys.getenv('R_LIBS_USER'), .libPaths())); cat(getsysreqs::get_sysreqs('website/renv.lock', distribution='ubuntu', release='22.04'))")
           if [ ! -z "$sysreqs" ]; then
             echo "Installing system requirements: $sysreqs"
             sudo apt-get update -y
@@ -50,8 +63,6 @@ jobs:
             echo "No system requirements found."
           fi
         shell: bash
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Need to setup to use RENV
       - name: Setup RENV
@@ -77,5 +88,5 @@ jobs:
         with:
           target: gh-pages
           path: website
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # env:
+        #   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
