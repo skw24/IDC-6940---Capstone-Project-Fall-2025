@@ -1,5 +1,5 @@
 ---
-title: "Logistic Regression Group - Report"
+title: "Predicting stroke risk from common health indicators: a binary logistic regression analysis"
 bibliography: references.bib
 link-citations: true
 ---

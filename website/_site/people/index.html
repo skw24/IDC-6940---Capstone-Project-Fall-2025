@@ -101,34 +101,6 @@ ul.task-list li input[type="checkbox"] {
       window['quarto-listing-loaded']();
     }
   })
-  
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-orientator .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-title','listing-subtitle','listing-image','listing-education',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-title","listing-author","listing-image","listing-description"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-orientator'] = new List('listing-orientator', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
   </script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
@@ -378,7 +350,6 @@ window.Quarto = {
    
   <ul>
   <li><a href="#graduate-students" id="toc-graduate-students" class="nav-link active" data-scroll-target="#graduate-students">Graduate Students</a></li>
-  <li><a href="#orientator" id="toc-orientator" class="nav-link" data-scroll-target="#orientator">Orientator</a></li>
   </ul>
 </nav>
     </div>
@@ -496,42 +467,11 @@ B.S. Mechanical Engineering | Univevrsity of West Florida
 </div>
 <div class="listing-no-matching d-none">No matching items</div>
 </div>
-</section>
-<section id="orientator" class="level2">
-<h2 class="anchored" data-anchor-id="orientator">Orientator</h2>
-<div id="listing-orientator" class="quarto-listing quarto-listing-container-grid">
-<div class="list grid quarto-listing-cols-3">
-<div class="g-col-1" data-index="0" data-listing-file-modified-sort="1759355968501" data-listing-reading-time-sort="1" data-listing-word-count-sort="39">
-<a href="../people/cohen-achraf/index.html" class="quarto-grid-link">
-<div class="quarto-grid-item card h-100 card-left">
-<p class="card-img-top">
-<img loading="lazy" src="../people/cohen-achraf/avatar.jpg" class="thumbnail-image card-img" style="height: 150px;">
-</p>
-<div class="card-body post-contents">
-<h5 class="no-anchor card-title listing-title">
-Achraf Cohen
-</h5>
-<div class="card-subtitle listing-subtitle">
-Associate Professor of Statistics/Data Science
-</div>
-<table class="card-other-values">
+<!-- 
+## Orientator
 
-<tbody><tr>
-<td>
-education
-</td>
-<td class="education">
-PhD in Applied Mathematics/Statistics | University of Angers, France
-</td>
-</tr>
-
-</tbody></table>
-</div>
-</div></a>
-</div>
-</div>
-<div class="listing-no-matching d-none">No matching items</div>
-</div>
+::: {#orientator}
+::: -->
 <div class="sand-background">
 
 

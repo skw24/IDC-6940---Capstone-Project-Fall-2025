@@ -9,14 +9,14 @@ listing:
     sort: last
     type: grid
     fields: [title, subtitle, image, education]
-  - id: orientator
-    include: 
-      people_group: "orientator"
-    exclude:
-      external: true
-    sort: last
-    type: grid
-    fields: [title, subtitle, image, education]
+  # - id: orientator
+  #   include: 
+  #     people_group: "orientator"
+  #   exclude:
+  #     external: true
+  #   sort: last
+  #   type: grid
+  #   fields: [title, subtitle, image, education]
 page-layout: full
 ---
 
@@ -25,10 +25,10 @@ page-layout: full
 ::: {#gradstudent}
 :::
 
-
+<!-- 
 ## Orientator
 
 ::: {#orientator}
-:::
+::: -->
 
 :::{.sand-background}

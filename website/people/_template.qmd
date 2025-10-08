@@ -2,7 +2,7 @@
 title: &TITLE Name
 last: 
 first: 
-people_group: "gradstudent | orientator"
+people_group: "gradstudent"
 email: 
 education:
   - deg | inst  <br> 

@@ -27,3 +27,7 @@ Capstone template
 
 https://github.com/capstone4ds/capstone4ds_template
 
+
+Stroke Prediction Dataset
+
+https://www.kaggle.com/datasets/fedesoriano/stroke-prediction-dataset
