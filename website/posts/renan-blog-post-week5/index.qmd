@@ -1,0 +1,219 @@
+---
+title: "Project Setup - Week 5"
+description: "For Week 5 setting up Quarto Website and Getting Started with R project"
+author:
+  - name: Renan Monteiro Barbosa
+    url: https://github.com/renanmb
+    affiliation: Master of Data Science Program @ The University of West Florida (UWF)
+    # affiliation-url: https://ucsb-meds.github.io/
+# date: 10-24-2022
+categories: [getting started, week 5, renan]
+# citation:
+#   url: https://samanthacsik.github.io/posts/2022-10-24-my-blog-post/
+image: images/spongebob-imagination.jpg
+draft: false
+bibliography: references.bib
+link-citations: true
+---
+
+This week we are getting started on how to setup the Quarto and R project for proper Collaboration.
+
+This post will demonstrate how to install RENV, initate your Renv environment and then load the dataset and do some demonstrations manipulating the dataset.
+
+We will be using the dataset: [Stroke Prediction Dataset](https://www.kaggle.com/datasets/fedesoriano/stroke-prediction-dataset)
+
+
+## What is Renv
+
+[renv](https://rstudio.github.io/renv/) is a pakcage manager that helps you create reproducible environments for your R projects.
+
+Install the latest version of renv from CRAN with:
+
+```{{r}}
+install.packages("renv")
+```
+
+### Renv Workflow
+
+Use [renv::init()](https://rstudio.github.io/renv/reference/init.html) to initialize renv in a new or existing project. This will set up a project library, containing all the packages you’re currently using. The packages (and all the metadata needed to reinstall them) are recorded into a lockfile, renv.lock, and a .Rprofile ensures that the library is used every time you open that project.
+
+As you continue to work on your project, you will install and upgrade packages, either using [install.packages()](https://rdrr.io/r/utils/install.packages.html) and [update.packages()](https://rdrr.io/r/utils/update.packages.html) or [renv::install()](https://rstudio.github.io/renv/reference/install.html) and [renv::update()](https://rstudio.github.io/renv/reference/update.html). After you’ve confirmed your code works as expected, use [renv::snapshot()](https://rstudio.github.io/renv/reference/snapshot.html) to record the packages and their sources in the lockfile.
+
+Later, if you need to share your code with someone else or run your code on new machine, your collaborator (or you) can call [renv::restore()](https://rstudio.github.io/renv/reference/restore.html) to reinstall the specific package versions recorded in the lockfile.
+
+### Learning more
+
+If this is your first time using renv, we strongly recommend starting with the [Introduction to renv](https://rstudio.github.io/renv/articles/renv.html) vignette: this will help you understand the most important verbs and nouns of renv.
+
+If you have a question about renv, please first check the [FAQ](https://rstudio.github.io/renv/articles/faq.html) to see whether your question has already been addressed. If it hasn’t, please feel free to ask on the [Posit Forum](https://forum.posit.co/?_gl=1*z3n5na*_ga*MTE0Mjc0MDc2OS4xNzU2NzYwNjQy*_ga_2C0WZ1JHG0*czE3NTk5NTExMjMkbzckZzEkdDE3NTk5NTExNDMkajQwJGwwJGgw).
+
+If you believe you’ve found a bug in renv, please file a bug (and, if possible, a [reproducible example](https://reprex.tidyverse.org/)) at https://github.com/rstudio/renv/issues.
+
+## Import Dataset Example
+
+Get the packages setup:
+
+```{r setup}
+#| output: false
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+library(plotly)
+
+library(fitdistrplus)
+library(gsheet)
+library(boot)
+library(readr)
+```
+
+### Import the dataset
+
+This should find the path to the datasets folder programatically.
+
+```{r}
+find_git_root <- function(start = getwd()) {
+  path <- normalizePath(start, winslash = "/", mustWork = TRUE)
+  while (path != dirname(path)) {
+    if (dir.exists(file.path(path, ".git"))) return(path)
+    path <- dirname(path)
+  }
+  stop("No .git directory found — are you inside a Git repository?")
+}
+
+repo_root <- find_git_root()
+datasets_path <- file.path(repo_root, "datasets")
+# repo_root
+# datasets_path
+```
+
+Now we define the dataset we want to load, healthcare-dataset-stroke-data.csv will be inside kaggle-healthcare-dataset-stroke-data.
+
+```{r}
+#| output: false
+kaggle_dataset_path <- file.path(datasets_path, "kaggle-healthcare-dataset-stroke-data/healthcare-dataset-stroke-data.csv")
+
+kaggle_data1 = read_csv(kaggle_dataset_path, show_col_types = FALSE)
+```
+
+Exploring the dataset, BMI is not stored as numeric value also the NA fields are stored as text "N/A".
+
+```{r}
+head(kaggle_data1)
+
+# Count total NAs per column
+colSums(is.na(kaggle_data1))
+```
+
+Apparently seems there is no NA values. Let's continue.
+
+```{r}
+# overall
+summary(kaggle_data1)
+glimpse(kaggle_data1)
+```
+
+Summary give some interesting insights but glimpse shows that there are NA values, even worse, the BMI values are stored and strings and should be numeric.
+
+Now lets explore the Categorical and Numeric variables.
+
+```{r}
+# check categorical variables
+library(dplyr)
+library(tidyr)
+
+# Check one by one, lets see what we got
+# kaggle_data1 %>% count(gender)
+# kaggle_data1 %>% count(hypertension)
+# kaggle_data1 %>% count(heart_disease)
+# kaggle_data1 %>% count(ever_married)
+# kaggle_data1 %>% count(work_type)
+# kaggle_data1 %>% count(Residence_type )
+# kaggle_data1 %>% count(smoking_status)
+# kaggle_data1 %>% count(stroke)
+
+# Now make it a little cleaner
+cat_vars <- c("gender", "hypertension", "heart_disease", "ever_married",
+              "work_type", "Residence_type", "smoking_status", "stroke")
+
+kaggle_data1[, cat_vars] %>%
+  # Convert all to character to avoid type conflicts
+  mutate_all(as.character) %>%
+  pivot_longer(cols = names(.), names_to = "variable", values_to = "value") %>%
+  count(variable, value) %>%
+  arrange(variable, desc(n)) %>% print(n = 22)
+
+```
+
+Its pretty interesting, now lets see what happens with the numeric variables
+
+```{r}
+# Check Numeric Variables - id, age, avg_glucose_level, bmi
+kaggle_data1 %>%
+  select_if(is.numeric) %>%
+  summary()
+```
+
+We need to deal with the BMI data which has missing values and its not stored as numerical.
+
+```{r}
+# unique(kaggle_data1$bmi)
+kaggle_data2 <- kaggle_data1 %>%
+  mutate(bmi = na_if(bmi, "N/A")) %>%   # Convert "N/A" string to NA
+  mutate(bmi = as.numeric(bmi))         # Convert from character to numeric
+
+# kaggle_data2 <- kaggle_data1 %>% mutate(bmi = as.numeric(na_if(bmi, "N/A")))
+
+# Check if it worked
+str(kaggle_data2$bmi)
+sum(is.na(kaggle_data2$bmi))
+
+# Check Numeric Variables - id, age, avg_glucose_level, bmi
+kaggle_data2 %>%
+  select_if(is.numeric) %>%
+  summary()
+```
+
+
+## Conclusion
+
+The dataset is imbalanced and has many issues there are several research work that explore solutions:
+
+- [Machine learning for stroke prediction using imbalanced data](https://www.nature.com/articles/s41598-025-01855-w) @melnykova2025machine
+- [Predictive modelling and identification of key risk factors for stroke using machine learning](https://pmc.ncbi.nlm.nih.gov/articles/PMC11106277/) @hassan2024predictive
+
+
+The research [Predictive modelling and identification of key risk factors for stroke using machine learning](https://pmc.ncbi.nlm.nih.gov/articles/PMC11106277/) has made several contributions adding a lot of insights:
+
+- Exploring various data imputation techniques and addressing data imbalance issues in order to enhance the accuracy and robustness of stroke prediction models.
+
+- Identifying crucial features for stroke prediction and uncovering previously unknown risk factors, giving a comprehensive understanding of stroke risk assessment.
+
+- Creating an augmented dataset incorporating important key risk factor features using the imputed datasets, enhancing the effectiveness of stroke prediction models.
+
+- Assessing the effectiveness of advanced machine learning models across different datasets and creating a robust Dense Stacking Ensemble model for stroke prediction.
+
+- The key contribution is showcasing the enhanced predictive capabilities of the model in accurately identifying and testing strokes, surpassing the performance of prior studies that utilized the same dataset.
+
+
+
+
+::: {.callout-note}
+Large datasets might need Github LFS which is not setup, therefore must store then externally. 
+:::
+
+## Additional Thoughts
+
+Quarto websites when combined with python and R is a great way to 
+
+Quarto websites, when combined with Python and R, offer a powerful way to create dynamic, data-driven content that turns out into amazing presentations rich in visual content. 
+
+However there are limitations, Github Actions runner is not powerful and before submitting the project for rendering must take that into consideration. On future work will evaluate solutions to the computational budget limitations in Github Action Runner.
+
+[How to efficiently break up a computationally heavy article into separate notebooks?#8410](https://github.com/quarto-dev/quarto-cli/discussions/8410)
+
+Some have mentioned that the project can be split into sections.
+
+### References
+
+::: {#refs}
+:::
