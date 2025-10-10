@@ -345,14 +345,17 @@ div.csl-indent {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#what-is-renv" id="toc-what-is-renv" class="nav-link active" data-scroll-target="#what-is-renv">What is Renv</a></li>
+  <li><a href="#what-is-renv" id="toc-what-is-renv" class="nav-link active" data-scroll-target="#what-is-renv">What is Renv</a>
+  <ul class="collapse">
   <li><a href="#renv-workflow" id="toc-renv-workflow" class="nav-link" data-scroll-target="#renv-workflow">Renv Workflow</a></li>
+  <li><a href="#learning-more" id="toc-learning-more" class="nav-link" data-scroll-target="#learning-more">Learning more</a></li>
+  </ul></li>
   <li><a href="#import-dataset-example" id="toc-import-dataset-example" class="nav-link" data-scroll-target="#import-dataset-example">Import Dataset Example</a>
   <ul class="collapse">
   <li><a href="#import-the-dataset" id="toc-import-the-dataset" class="nav-link" data-scroll-target="#import-the-dataset">Import the dataset</a></li>
   </ul></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
-  <li><a href="#conclusion-1" id="toc-conclusion-1" class="nav-link" data-scroll-target="#conclusion-1">Conclusion</a>
+  <li><a href="#additional-thoughts" id="toc-additional-thoughts" class="nav-link" data-scroll-target="#additional-thoughts">Additional Thoughts</a>
   <ul class="collapse">
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul></li>
@@ -415,12 +418,18 @@ div.csl-indent {
 <div class="sourceCode" id="cb1"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">install.packages</span>(<span class="st">"renv"</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="renv-workflow" class="level2">
-<h2 class="anchored" data-anchor-id="renv-workflow">Renv Workflow</h2>
+<section id="renv-workflow" class="level3">
+<h3 class="anchored" data-anchor-id="renv-workflow">Renv Workflow</h3>
 <p>Use <a href="https://rstudio.github.io/renv/reference/init.html">renv::init()</a> to initialize renv in a new or existing project. This will set up a project library, containing all the packages you’re currently using. The packages (and all the metadata needed to reinstall them) are recorded into a lockfile, renv.lock, and a .Rprofile ensures that the library is used every time you open that project.</p>
 <p>As you continue to work on your project, you will install and upgrade packages, either using <a href="https://rdrr.io/r/utils/install.packages.html">install.packages()</a> and <a href="https://rdrr.io/r/utils/update.packages.html">update.packages()</a> or <a href="https://rstudio.github.io/renv/reference/install.html">renv::install()</a> and <a href="https://rstudio.github.io/renv/reference/update.html">renv::update()</a>. After you’ve confirmed your code works as expected, use <a href="https://rstudio.github.io/renv/reference/snapshot.html">renv::snapshot()</a> to record the packages and their sources in the lockfile.</p>
 <p>Later, if you need to share your code with someone else or run your code on new machine, your collaborator (or you) can call <a href="https://rstudio.github.io/renv/reference/restore.html">renv::restore()</a> to reinstall the specific package versions recorded in the lockfile.</p>
+</section>
+<section id="learning-more" class="level3">
+<h3 class="anchored" data-anchor-id="learning-more">Learning more</h3>
+<p>If this is your first time using renv, we strongly recommend starting with the <a href="https://rstudio.github.io/renv/articles/renv.html">Introduction to renv</a> vignette: this will help you understand the most important verbs and nouns of renv.</p>
+<p>If you have a question about renv, please first check the <a href="https://rstudio.github.io/renv/articles/faq.html">FAQ</a> to see whether your question has already been addressed. If it hasn’t, please feel free to ask on the <a href="https://forum.posit.co/?_gl=1*z3n5na*_ga*MTE0Mjc0MDc2OS4xNzU2NzYwNjQy*_ga_2C0WZ1JHG0*czE3NTk5NTExMjMkbzckZzEkdDE3NTk5NTExNDMkajQwJGwwJGgw">Posit Forum</a>.</p>
+<p>If you believe you’ve found a bug in renv, please file a bug (and, if possible, a <a href="https://reprex.tidyverse.org/">reproducible example</a>) at https://github.com/rstudio/renv/issues.</p>
+</section>
 </section>
 <section id="import-dataset-example" class="level2">
 <h2 class="anchored" data-anchor-id="import-dataset-example">Import Dataset Example</h2>
@@ -657,8 +666,8 @@ $ stroke            &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
 <p>The dataset is imbalanced and has many issues there are several research work that explore solutions:</p>
 <ul>
-<li><a href="https://www.nature.com/articles/s41598-025-01855-w">Machine learning for stroke prediction using imbalanced data</a></li>
-<li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11106277/">Predictive modelling and identification of key risk factors for stroke using machine learning</a></li>
+<li><a href="https://www.nature.com/articles/s41598-025-01855-w">Machine learning for stroke prediction using imbalanced data</a> <span class="citation" data-cites="melnykova2025machine">(<a href="#ref-melnykova2025machine" role="doc-biblioref">1</a>)</span></li>
+<li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11106277/">Predictive modelling and identification of key risk factors for stroke using machine learning</a> <span class="citation" data-cites="hassan2024predictive">(<a href="#ref-hassan2024predictive" role="doc-biblioref">2</a>)</span></li>
 </ul>
 <p>The research <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11106277/">Predictive modelling and identification of key risk factors for stroke using machine learning</a> has made several contributions adding a lot of insights:</p>
 <ul>
@@ -682,8 +691,8 @@ Note
 </div>
 </div>
 </section>
-<section id="conclusion-1" class="level2">
-<h2 class="anchored" data-anchor-id="conclusion-1">Conclusion</h2>
+<section id="additional-thoughts" class="level2">
+<h2 class="anchored" data-anchor-id="additional-thoughts">Additional Thoughts</h2>
 <p>Quarto websites when combined with python and R is a great way to</p>
 <p>Quarto websites, when combined with Python and R, offer a powerful way to create dynamic, data-driven content that turns out into amazing presentations rich in visual content.</p>
 <p>However there are limitations, Github Actions runner is not powerful and before submitting the project for rendering must take that into consideration. On future work will evaluate solutions to the computational budget limitations in Github Action Runner.</p>
@@ -691,8 +700,13 @@ Note
 <p>Some have mentioned that the project can be split into sections.</p>
 <section id="references" class="level3">
 <h3 class="anchored" data-anchor-id="references">References</h3>
-<div id="refs" role="list">
-
+<div id="refs" class="references csl-bib-body" role="list">
+<div id="ref-melnykova2025machine" class="csl-entry" role="listitem">
+<div class="csl-left-margin">1. </div><div class="csl-right-inline">Melnykova N, Patereha Y, Skopivskyi S, Farion M, Fedushko S, Drohomyretska K. Machine learning for stroke prediction using imbalanced data. Scientific Reports. 2025;15(1):33773. </div>
+</div>
+<div id="ref-hassan2024predictive" class="csl-entry" role="listitem">
+<div class="csl-left-margin">2. </div><div class="csl-right-inline">Hassan A, Gulzar Ahmad S, Ullah Munir E, Ali Khan I, Ramzan N. Predictive modelling and identification of key risk factors for stroke using machine learning. Scientific Reports. 2024;14(1):11498. </div>
+</div>
 </div>
 
 

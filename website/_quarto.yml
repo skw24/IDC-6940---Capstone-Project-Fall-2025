@@ -1,6 +1,10 @@
 project:
   type: website
 
+execute:
+  # Point to the R environment under website
+  renv-path: website/renv
+  
 website:
   title: "IDC-6940 - Capstone Project Fall-2025"
   navbar:

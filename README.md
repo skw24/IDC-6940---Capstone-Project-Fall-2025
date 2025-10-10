@@ -107,3 +107,8 @@ quarto render
 quarto preview
 ```
 
+Check if renv is working:
+
+```bash
+.libPaths()
+```
