@@ -1,0 +1,581 @@
+---
+title: "Reproducing Steve's Code - Week 7"
+description: "For Week 7 we are replicating Steve's findings"
+author:
+  - name: Renan Monteiro Barbosa
+    url: https://github.com/renanmb
+    affiliation: Master of Data Science Program @ The University of West Florida (UWF)
+    # affiliation-url: https://ucsb-meds.github.io/
+# date: 10-24-2022
+categories: [coding, week 7, renan]
+# citation:
+#   url: https://samanthacsik.github.io/posts/2022-10-24-my-blog-post/
+image: images/spongebob-imagination.jpg
+draft: false
+bibliography: references.bib
+link-citations: true
+---
+
+For the Week 7 we will be reproducing Steve's findings with the dataset @fedesorianoStrokePredictionDatasetKaggle. 
+
+You can download the Dataset from the following link: [Stroke Prediction Dataset](https://www.kaggle.com/datasets/fedesoriano/stroke-prediction-dataset)
+
+
+## 1. Setup and Data Loading
+
+First we need to install all packages, system dependencies and solve conflicts to produce a new renv.lock file.
+
+### 1.1 Load Libraries
+
+```{r}
+#| code-fold: true
+#| label: install-packages
+
+# Run this once to install all the necessary packages
+# install.packages(c("corrplot", "ggpubr", "caret", "mice", "ROSE", "ranger", "stacks", "tidymodels"))
+# install.packages("themis")
+# install.packages("xgboost")
+# install.packages("gghighlight")
+# install.packages("dplyr")
+# install.packages("pscl")
+# install.packages("parallelly")
+# install.packages("cli")
+# install.packages("car")
+# install.packages("ResourceSelection")
+```
+
+We can use this to check installed packages:
+
+```{{r}}
+renv::activate("website")
+"yardstick" %in% rownames(installed.packages())
+```
+
+```{r setup}
+#| code-fold: true
+#| label: load-libraries
+#| message: false
+#| warning: false
+
+# For data manipulation and visualization
+library(tidyverse)
+library(ggplot2)
+library(corrplot)
+library(knitr)
+library(ggpubr)
+
+# For data preprocessing and modeling
+library(caret)
+library(mice)
+library(ROSE) # For SMOTE
+library(ranger) # A fast implementation of random forests
+
+# For stacking/ensemble models
+library(stacks)
+library(tidymodels)
+
+library(themis)
+library(gghighlight)
+
+library(dplyr)
+library(pscl)
+library(car)
+library(ResourceSelection)
+
+# Set seed for reproducibility
+set.seed(123)
+```
+
+### 1.2 Load Data
+
+Will be using my original Dataset as well Steve's Dataset and compare for differences.
+
+Renan: kaggle_data1
+Steve: stroke1
+
+#### 1.2.1 Renan Dataset
+
+Below will be loading the healthcare-dataset-stroke-data.csv and performing necessary changes to the dataset and loading into the DataFrame: kaggle_data1
+
+```{r}
+#| code-fold: true
+#| output: false
+find_git_root <- function(start = getwd()) {
+  path <- normalizePath(start, winslash = "/", mustWork = TRUE)
+  while (path != dirname(path)) {
+    if (dir.exists(file.path(path, ".git"))) return(path)
+    path <- dirname(path)
+  }
+  stop("No .git directory found — are you inside a Git repository?")
+}
+
+repo_root <- find_git_root()
+datasets_path <- file.path(repo_root, "datasets")
+kaggle_dataset_path <- file.path(datasets_path, "kaggle-healthcare-dataset-stroke-data/healthcare-dataset-stroke-data.csv")
+kaggle_data1 = read_csv(kaggle_dataset_path, show_col_types = FALSE)
+
+# unique(kaggle_data1$bmi)
+kaggle_data1 <- kaggle_data1 %>%
+  mutate(bmi = na_if(bmi, "N/A")) %>%   # Convert "N/A" string to NA
+  mutate(bmi = as.numeric(bmi))         # Convert from character to numeric
+
+# Remove the 'Other' gender row and the 'id' column
+kaggle_data1 <- kaggle_data1 %>%
+  filter(gender != "Other") %>%
+  select(-id) %>%
+  mutate_if(is.character, as.factor) # Convert character columns to factors for easier modeling
+```
+
+#### 1.2.1 Steve Dataset
+
+Below will be loading the stroke.csv and performing necessary changes to the dataset and loading into the DataFrame: stroke1
+
+```{r}
+#| code-fold: true
+# Reading the datafile in (the same one you got for us Renan)#
+steve_dataset_path <- file.path(datasets_path, "steve/stroke.csv")
+stroke1 = read_csv(steve_dataset_path, show_col_types = FALSE)
+# stroke1 <- read.csv("D:\\stroke.csv")
+```
+
+Exploring Dataset so we can plan on how to proceed and possible changes.
+
+```{r}
+#| code-fold: true
+#| output: false
+# Reveiewing the columns of the data and the dataset size#
+head(stroke1)
+nrow(stroke1)
+#Some data to look at the data in each column#
+summary(stroke1)
+count_tables <- lapply(stroke1, table)
+count_tables
+```
+
+Preparing the Dataset
+
+For each Column...removing the unncessary or unusable variables:
+1. **Smoking Status** - remove unknown
+1. **bmi** - remove N/A
+3. **Work type** - remove children
+4. **age** create numerical variable with 2 places after the decimal
+5. **gender** -remove other
+
+In each column..that has data points that are not usable, recoding those datapoints to become"N/A"
+
+```{r}
+#| code-fold: true
+stroke1[stroke1 == "N/A"] <- NA
+stroke1[stroke1 == "Unknown"] <- NA
+stroke1[stroke1 == "children"] <- NA
+stroke1[stroke1 == "other"] <- NA
+```
+
+for BMI changing the variable type to numeric and formatting the data point to 2 places ater the decimal
+
+```{r}
+#| code-fold: true
+stroke1$bmi <- round(as.numeric(stroke1$bmi), 2)
+```
+
+For Gender, changning Male to 1 and Female to 2, then reformatting gender as numeric
+
+```{r}
+#| code-fold: true
+stroke1$gender[stroke1$gender == "Male"] <- 1
+stroke1$gender[stroke1$gender == "Female"] <- 2
+stroke1$gender <- as.numeric(stroke1$gender)
+```
+
+For ever_married, changing yes to 1 and No to 2, the reformatting the variable ever_married to numeric
+
+```{r}
+#| code-fold: true
+stroke1$ever_married[stroke1$ever_married == "Yes"] <- 1
+stroke1$ever_married[stroke1$ever_married == "No"] <- 2
+stroke1$ever_married <- as.numeric(stroke1$ever_married)
+```
+
+For work type recoding Govt_job to 1, Private to 3, Self-employed to 3, and Never_worked to 4, then reformatting work_type to numeric
+
+```{r}
+#| code-fold: true
+stroke1$work_type[stroke1$work_type == "Govt_job"] <- 1
+stroke1$work_type[stroke1$work_type == "Private"] <- 2
+stroke1$work_type[stroke1$work_type == "Self-employed"] <- 3
+stroke1$work_type[stroke1$work_type == "Never_worked"] <- 4
+stroke1$work_type <- as.numeric(stroke1$work_type)
+```
+
+For Residence_type, recoding urban to 1, Rural to 2, and then reformatting Residence type to Numeric
+
+```{r}
+#| code-fold: true
+stroke1$Residence_type[stroke1$Residence_type == "Urban"] <- 1
+stroke1$Residence_type[stroke1$Residence_type == "Rural"] <- 2
+stroke1$Residence_type <- as.numeric(stroke1$Residence_type)
+```
+
+for avg_glucose_level, heart_disease, and hypertension, reformattint the 3 variables to numeric
+
+```{r}
+#| code-fold: true
+stroke1$avg_glucose_level <- as.numeric(stroke1$avg_glucose_level)
+stroke1$heart_disease <- as.numeric(stroke1$heart_disease)
+stroke1$hypertension <- as.numeric(stroke1$hypertension)
+```
+
+For age, reformatting age to numeric and putting 2 places after the decimnals
+
+```{r}
+#| code-fold: true
+stroke1$age <- round(as.numeric(stroke1$age), 2)
+```
+
+For stroke, reformatting the variable stroke  to numeric
+
+```{r}
+#| code-fold: true
+stroke1$stroke <- as.numeric(stroke1$stroke)
+```
+
+For smoking_status, recoding never smoked to 1, formerly smoked to 2, and smokes to 3. The reformat the variable to numeric
+
+```{r}
+#| code-fold: true
+stroke1$smoking_status[stroke1$smoking_status == "never smoked"] <- 1
+stroke1$smoking_status[stroke1$smoking_status == "formerly smoked"] <- 2
+stroke1$smoking_status[stroke1$smoking_status == "smokes"] <- 3
+stroke1$smoking_status <- as.numeric(stroke1$smoking_status)
+```
+
+deleted to column ID from the dataset since its not needed for the analysis
+
+```{r}
+#| code-fold: true
+stroke1 <- stroke1[, !(names(stroke1) %in% "id")]
+```
+
+renameed stroke dataset without id to stroke1_clean
+
+```{r}
+#| code-fold: true
+stroke1_clean <- na.omit(stroke1)
+```
+
+converted all columns to numeric and removed id
+
+```{r}
+#| code-fold: true
+str(stroke1_clean)
+nrow(stroke1_clean)
+```
+
+
+## 2. Apply Logistic Regression
+
+Applying Logistic Regression to Steve Dataset
+
+```{r}
+#| code-fold: true
+LR_stroke1 <- stroke1_clean
+#Do Logistic Regression on dataset#
+model <- glm(stroke ~ gender + age + hypertension + heart_disease + ever_married + work_type + Residence_type + avg_glucose_level + bmi + smoking_status, data=LR_stroke1, family = binomial)
+summary(model)
+```
+
+Because, Rsquared and adjusted Rsquared is not appropriated for logistic regression model, to see how model fits and explains variance used alternative
+
+### 2.1 Evaluating model fit
+
+Evaluating model fit
+
+Comment Oh crap _ McFadden = .18-- not a bad fit for logistic regression
+
+```{r}
+#| code-fold: true
+# Because, Rsquared and adjusted Rsquared is not appropriated for logistic regression model, to see how model fits and explains variance used alternative#
+#looking at model fit#
+pR2(model)
+```
+
+### 2.2 Apply Confusion Matrix
+
+Do a confusion matrix for the model by installing Parallelly, and cli, and using caret from the library
+
+comment on confusion matrix =- poor results
+
+```{r}
+#| code-fold: true
+# Predict probabilities from the logistic regression model
+predicted_prob <- predict(model, type = "response")
+
+# Convert probabilities to binary classes using a 0.5 cutoff
+predicted_class <- ifelse(predicted_prob > 0.5, 1, 0)
+```
+
+```{r}
+#| code-fold: true
+# library(caret)
+predicted_class <- factor(predicted_class, levels = c(0,1))
+ForReal_Stroke <- factor(LR_stroke1$stroke, levels = c(0,1))
+confusionMatrix(predicted_class, ForReal_Stroke)
+```
+
+### 2.3 Apply F1 Score and Precision Recall
+
+Look at dataset and logistic regression analysis close with F1 score and Precision Recall
+
+do F1 Score and Precision Recall
+
+Precision - out of all the true strokes the model predicted, how many really were strokes? Consider 1 = 100%
+
+```{r}
+#| code-fold: true
+precision <- sum((predicted_class == 1) & (ForReal_Stroke == 1)) / sum(predicted_class == 1)
+```
+
+Recall - out of all the actual strokes, how many did the model catch? = .01 or 1%
+
+```{r}
+#| code-fold: true
+recall <- sum((predicted_class == 1) & (ForReal_Stroke == 1)) / sum(ForReal_Stroke == 1)
+```
+
+f1_Score - How well does this model predict strokes? = .022 or 2.2% --very poorly 
+
+```{r}
+#| code-fold: true
+f1_score  <- 2 * precision * recall / (precision + recall)
+```
+
+precision, recall, f1_score
+
+```{r}
+#| code-fold: true
+precision
+recall
+f1_score
+```
+
+## 3. Testing logistic Regression Model Assumptions
+
+There are several assumptions for Logistic Regression:
+1. The Dependent Variable is binary (i.e, 0 or 1)
+2. There is a linear relationship between th logit of the outcome and each predictor
+3. There are NO high leverage outliers in the predictors
+4. There is No high multicollinearity (ie strong correlations) between predictors
+
+
+```{r}
+#| code-fold: true
+LR_stroke2 <- stroke1_clean
+model2 <- glm(stroke ~ gender + age + hypertension + heart_disease + ever_married + work_type + Residence_type + avg_glucose_level + bmi + smoking_status, data=LR_stroke2, family = binomial)
+summary(model2)
+```
+
+### 3.1 Testing Assumption 1
+
+Testing Assumption 1: The Dependent Variable is binary (0 or 1)
+
+```{r}
+#| code-fold: true
+unique(LR_stroke2$stroke)
+```
+
+### 3.2 Testing Assumption 2
+
+Testing Assumption 2: There is a linear relationship between the outcome variable and each predictor (use boxTidwell)
+
+For boxTidwell, first adjust all predictors so all values are positive. If we obtain a P value greater than 0.05 it indicates a linear relationship between the predictor and the outcome.
+
+```{r}
+#| code-fold: true
+LR_stroke2$genderadj            <- LR_stroke2$gender            + abs(min(LR_stroke1$gender))            + 1
+LR_stroke2$ageadj               <- LR_stroke2$age               + abs(min(LR_stroke1$age))               + 1
+LR_stroke2$hypertensionadj      <- LR_stroke2$hypertension      + abs(min(LR_stroke1$hypertension))      + 1
+LR_stroke2$heart_diseaseadj     <- LR_stroke2$heart_disease     + abs(min(LR_stroke1$hypertension))      + 1
+LR_stroke2$ever_marriedadj      <- LR_stroke2$ever_married      + abs(min(LR_stroke1$ever_married))      + 1
+LR_stroke2$work_typeadj         <- LR_stroke2$work_type         + abs(min(LR_stroke1$work_type))         + 1
+LR_stroke2$Residence_typeadj    <- LR_stroke2$Residence_type    + abs(min(LR_stroke1$Residence_type))    + 1
+LR_stroke2$avg_glucose_leveladj <- LR_stroke2$avg_glucose_level + abs(min(LR_stroke1$avg_glucose_level)) + 1
+LR_stroke2$bmiadj               <- LR_stroke2$bmi               + abs(min(LR_stroke1$bmi))               + 1
+LR_stroke2$smoking_statusadj    <- LR_stroke2$smoking_status    + abs(min(LR_stroke1$smoking_status))    + 1
+```
+
+Error in linearHypothesis.lm(mod.2, H) : there are aliased coefficients in the model.
+
+```{r}
+#| code-fold: true
+# boxTidwell(stroke ~ genderadj + ageadj + hypertensionadj + heart_diseaseadj + ever_marriedadj + work_typeadj + Residence_typeadj + avg_glucose_leveladj + bmiadj + smoking_statusadj, data=LR_stroke2)
+```
+
+#### 3.2.1 Issues Testing Assumption 2
+
+Trying to Drop Aliased Predictors
+
+```{r}
+#| code-fold: true
+# First, create the linear model object
+lm_model <- lm(stroke ~ genderadj + ageadj + hypertensionadj + heart_diseaseadj + ever_marriedadj + work_typeadj + Residence_typeadj + avg_glucose_leveladj + bmiadj + smoking_statusadj, data=LR_stroke2)
+
+# Then, run the alias() function
+alias(lm_model)
+# Model : stroke ~ genderadj + ageadj + hypertensionadj + heart_diseaseadj + ever_marriedadj + work_typeadj + Residence_typeadj + avg_glucose_leveladj + bmiadj + smoking_statusadj
+```
+
+You can also check for perfect correlation and see if any correlations are ±1.
+
+```{r}
+#| code-fold: true
+cor(LR_stroke2[, c("genderadj","ageadj","hypertensionadj","heart_diseaseadj",
+                   "ever_marriedadj","work_typeadj","Residence_typeadj",
+                   "avg_glucose_leveladj","bmiadj","smoking_statusadj")])
+```
+
+check constant columns:
+
+If any variable only has one unique value → it’s constant → alias.
+
+```{r}
+#| code-fold: true
+sapply(LR_stroke2, function(x) length(unique(x)))
+```
+
+Error in linearHypothesis.lm(mod.2, H) : there are aliased coefficients in the model.
+
+```{r}
+#| code-fold: true
+# boxTidwell(stroke ~ genderadj + ageadj + hypertensionadj + heart_diseaseadj + ever_marriedadj + work_typeadj + Residence_typeadj + avg_glucose_leveladj + bmiadj + smoking_statusadj, data=LR_stroke2)
+```
+
+
+
+
+### 3.3 Testing Assumption 3
+
+Testing Assumption 3: assess influential outliers using car package and influencePlot
+
+```{r}
+#| code-fold: true
+car::influencePlot(model2)
+```
+
+### 3.4 Testing Assumption 4
+
+Testing Assumption 4 : Multicollinearity using ggplot and augment
+
+```{r}
+#| code-fold: true
+# Testing Assumption 4 : Multicollinearity using ggplot and augment#
+aug <- augment(model2)
+ggplot(aug,aes(.fitted, .std.resid)) + geom_point() + geom_hline(yintercept=0)
+```
+
+### 3.5 Conclusion of Testing Assumptions
+
+Conclusion: Now that all 4 assumptions are met, logistic regression is a valid model to analyze the model
+
+## 4 Analysis of the Model
+
+Part 4: Analysis of the Model
+
+```{r}
+#| code-fold: true
+model2 <- glm(stroke ~ gender + age + hypertension + heart_disease + ever_married + work_type + Residence_type + avg_glucose_level + bmi + smoking_status, data=LR_stroke2, family = binomial)
+summary(model2)
+```
+
+Conclusion: age, hypertension, heartdisease, and avg_glucose_level are statistically significant predictors on whether one has a stroke or not.
+
+all the P values of these 4 predictors is .05 or less (note included heart_disease because it approaches statistical significance at .057)
+
+Since this a logistic regression, we cant use R squared and adjusted R squared to see how well the model predicted stroke. So we substitute McFadden's P value.
+
+```{r}
+#| code-fold: true
+# install.packages("pscl")
+# library(pscl)
+pR2(model2)
+```
+
+
+Comment  McFadden = .18-- not a bad fit for logistic regression
+
+Create a confusion matrix (Type1 vs Type2 error in statistics)
+
+
+```{r}
+#| code-fold: true
+# install.packages("parallelly")
+# install.packages("cli")
+# library(caret)
+
+# Predict probabilities from the logistic regression model
+predicted_prob1 <- predict(model2, type = "response")
+
+# Convert probabilities to binary classes using a 0.5 cutoff
+predicted_class1 <- ifelse(predicted_prob1 > 0.5, 1, 0)
+
+predicted_class1 <- factor(predicted_class1, levels = c(0,1))
+ForReal_Stroke1 <- factor(LR_stroke2$stroke, levels = c(0,1))
+confusionMatrix(predicted_class1, ForReal_Stroke1)
+```
+
+Analysis of the Confusion Matrix: Crud...poor results
+
+
+Further Analysis of the Confusion Matrix with F1 score and Precision Recall
+
+### 4.1 F1 Score and Precision Recall
+
+Precision - out of all the true strokes the model predicted, how many really were strokes? =  1 = 100%
+
+```{r}
+#| code-fold: true
+precision1 <- sum((predicted_class1 == 1) & (ForReal_Stroke1 == 1)) / sum(predicted_class1 == 1)
+```
+
+Recall - out of all the actual strokes, how many did the model catch?
+
+Results = .01 or 1%---
+
+```{r}
+#| code-fold: true
+recall1 <- sum((predicted_class1 == 1) & (ForReal_Stroke1 == 1)) / sum(ForReal_Stroke1 == 1)
+```
+
+f1_Score - How well does this model predict strokes?
+
+Results = .022 or 2.2% --very poorly
+
+```{r}
+#| code-fold: true
+f1_score1  <- 2 * precision1 * recall1 / (precision1 + recall1)
+```
+
+precision1, recall1, f1_score1
+
+```{r}
+#| code-fold: true
+precision1
+recall1
+f1_score1
+```
+
+## Conclusion
+
+- Ideas for improving precision, recall and f1_score
+- Address imbalance by upsample (add stroke cases), downsample (remove non strokecases) and or SMOTE (Synthetic data)
+- Change the classification threshold
+- Compare with Alternative Models such as random forrests or XGBoost
+
+
+
+
+
+
+### References
+
+::: {#refs}
+:::

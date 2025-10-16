@@ -26,6 +26,7 @@ ul.task-list li input[type="checkbox"] {
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -367,21 +368,21 @@ div.csl-indent {
 <p>This week I review 2 articles</p>
 <section id="article-1" class="level2">
 <h2 class="anchored" data-anchor-id="article-1">Article 1</h2>
-<p><a href="https://huggingface.co/papers/2412.08424">From Logistic Regression to the Perceptron Algorithm: Exploring Gradient Descent with Large Step Sizes</a>. <span class="citation" data-cites="tyurin2024logisticregressionperceptronalgorithm">(<a href="#ref-tyurin2024logisticregressionperceptronalgorithm" role="doc-biblioref">1</a>)</span></p>
+<p><a href="https://huggingface.co/papers/2412.08424">From Logistic Regression to the Perceptron Algorithm: Exploring Gradient Descent with Large Step Sizes</a>.<span class="citation" data-cites="tyurin2024logisticregressionperceptronalgorithm"><sup>[<a href="#ref-tyurin2024logisticregressionperceptronalgorithm" role="doc-biblioref">1</a>]</sup></span></p>
 <p>The author presents some interesting findings that by connecting Logistic regression with gradient descent there is a link with the perceptron algorithm. With really large steps it acts like a perceptron which in some sense links it back to the Deep Equilibrium networks study. This paper is interesting because it is counter intuitive and brings a lot of things to reflect about classification and optimization theory.</p>
 </section>
 <section id="article-2" class="level2">
 <h2 class="anchored" data-anchor-id="article-2">Article 2</h2>
-<p><a href="https://huggingface.co/papers/2406.04370">Large Language Model Confidence Estimation via Black-Box Access</a>. <span class="citation" data-cites="pedapati2025largelanguagemodelconfidence">(<a href="#ref-pedapati2025largelanguagemodelconfidence" role="doc-biblioref">2</a>)</span></p>
+<p><a href="https://huggingface.co/papers/2406.04370">Large Language Model Confidence Estimation via Black-Box Access</a>.<span class="citation" data-cites="pedapati2025largelanguagemodelconfidence"><sup>[<a href="#ref-pedapati2025largelanguagemodelconfidence" role="doc-biblioref">2</a>]</sup></span></p>
 <p>This paper addresses the problem of estimating the confidence of large language model (LLM) outputs when only black-box (query-only) access is available. It is a simple technique that uses Logistic Regression to classify and validate the confidence of the outputs. The problem of using the black-box models is that there is no control over the model itself, but in some cases the benefits and the value of buying these services that provide a black-box model outweighs training your own custom so this is a framework that attempts to overcome the challenges.</p>
 <section id="references" class="level3">
 <h3 class="anchored" data-anchor-id="references">References</h3>
-<div id="refs" class="references csl-bib-body" role="list">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
 <div id="ref-tyurin2024logisticregressionperceptronalgorithm" class="csl-entry" role="listitem">
-<div class="csl-left-margin">1. </div><div class="csl-right-inline">Tyurin A. From logistic regression to the perceptron algorithm: Exploring gradient descent with large step sizes [Internet]. 2024. Available from: <a href="https://arxiv.org/abs/2412.08424">https://arxiv.org/abs/2412.08424</a></div>
+1. Tyurin, A. (2024). <em>From logistic regression to the perceptron algorithm: Exploring gradient descent with large step sizes</em>. <a href="https://arxiv.org/abs/2412.08424">https://arxiv.org/abs/2412.08424</a>
 </div>
 <div id="ref-pedapati2025largelanguagemodelconfidence" class="csl-entry" role="listitem">
-<div class="csl-left-margin">2. </div><div class="csl-right-inline">Pedapati T, Dhurandhar A, Ghosh S, Dan S, Sattigeri P. Large language model confidence estimation via black-box access [Internet]. 2025. Available from: <a href="https://arxiv.org/abs/2406.04370">https://arxiv.org/abs/2406.04370</a></div>
+2. Pedapati, T., Dhurandhar, A., Ghosh, S., Dan, S., &amp; Sattigeri, P. (2025). <em>Large language model confidence estimation via black-box access</em>. <a href="https://arxiv.org/abs/2406.04370">https://arxiv.org/abs/2406.04370</a>
 </div>
 </div>
 

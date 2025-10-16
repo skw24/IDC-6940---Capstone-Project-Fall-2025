@@ -33,6 +33,7 @@ format:
     css: styles.css
     toc: true
 
-csl: national-library-of-medicine.csl 
+# csl: national-library-of-medicine.csl 
+csl: apa-numeric-superscript-brackets.csl 
 
 

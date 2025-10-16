@@ -112,3 +112,13 @@ Check if renv is working:
 ```bash
 .libPaths()
 ```
+
+```{r}
+renv::snapshot()
+
+renv::init()
+```
+
+Shortcut to make a code chunk
+
+Ctrl+Shift+I (or Cmd+Option+I on macOS).

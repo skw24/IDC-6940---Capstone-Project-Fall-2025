@@ -16,23 +16,28 @@ bibliography: references.bib
 link-citations: true
 ---
 
-From the discoveries made from Week 5 using the dataset [Stroke Prediction Dataset](https://www.kaggle.com/datasets/fedesoriano/stroke-prediction-dataset) we will be further exploring it by using insights found in @hassan2024predictive.
+This post start at Week 6 and extended over several week. From the discoveries made from Week 5 using the dataset [Stroke Prediction Dataset](https://www.kaggle.com/datasets/fedesoriano/stroke-prediction-dataset) we will be further exploring it by using insights found in @hassan2024predictive. So to develop a better insight we will be reproducing the research work in this post. 
 
-The issue of data imbalance is a huge issue in stroke ­prediction @kokkotis2022explainable. Because of many reasons ranging from privacy to the difficulty of doing cohort studies pre-stroke datasets are rare, therefore we its more than likely to contain imbalanced classifications, with most instances being non-stroke c­ases @sirsat2020machine. This imbalance can result in biased models that favour the majority and ignore the minority, resulting in low forecast accuracy. To solve this issue and increase the effectiveness of prediction models, several oversampling and undersampling methods and much more are explored and employed, the popular of which is the ­SMOTE @wongvorachan2023comparison, @sowjanya2023effective.
+## Introduction
+
+The issue of data imbalance is a big problem for stroke ­prediction @kokkotis2022explainable. Because of many reasons ranging from privacy to the difficulty of doing cohort studies, the fact that pre-stroke datasets are rare, dataset often contain imbalanced classifications, with most instances being non-stroke c­ases @sirsat2020machine. So its unnecessary to say that this imbalance can result in biased models that favour the majority and ignore the minority, resulting in low forecast accuracy. To solve this issue and increase the effectiveness of the predictive models, we plan on exploring several oversampling and undersampling methods and much more are explored and employed, the popular of which is the ­SMOTE @wongvorachan2023comparison, @sowjanya2023effective.
+
 
 ## 1. Setup and Data Loading
 
-First, we need to load the required R packages and the dataset. The dataset is publicly available on Kaggle and was originally created by McKinsey & Company [Add citation to dataset].
+First, we need to load the required R packages and the dataset. The dataset is publicly available on Kaggle and was originally created by McKinsey & Company @fedesorianoStrokePredictionDatasetKaggle.
 
 ### 1.1 Load Libraries
 
 ```{r}
+#| code-fold: true
 #| label: install-packages
 
 # Run this once to install all the necessary packages
-install.packages(c("corrplot", "ggpubr", "caret", "mice", "ROSE", "ranger", "stacks", "tidymodels"))
-install.packages("themis")
-install.packages("xgboost")
+# install.packages(c("corrplot", "ggpubr", "caret", "mice", "ROSE", "ranger", "stacks", "tidymodels"))
+# install.packages("themis")
+# install.packages("xgboost")
+# install.packages("gghighlight")
 ```
 
 We can use this to check installed packages:
@@ -43,6 +48,7 @@ renv::activate("website")
 ```
 
 ```{r setup}
+#| code-fold: true
 #| label: load-libraries
 #| message: false
 #| warning: false
@@ -65,6 +71,7 @@ library(stacks)
 library(tidymodels)
 
 library(themis)
+library(gghighlight)
 
 # Set seed for reproducibility
 set.seed(123)
@@ -100,6 +107,7 @@ Might need to deal with the conflicts later:
 We will load the dataset and handle the data given the exploration done in Week5. The id column is unnecessary for prediction as well there are only 2 genders significant for prediction.
 
 ```{r}
+#| code-fold: true
 #| output: false
 find_git_root <- function(start = getwd()) {
   path <- normalizePath(start, winslash = "/", mustWork = TRUE)
@@ -129,7 +137,7 @@ kaggle_data1 <- kaggle_data1 %>%
 
 ## 2. Data Imputation and Balancing
 
-To handle the missing BMI values, the study explores three different imputation techniques. It also addresses the significant class imbalance between stroke and non-stroke cases using SMOTE.
+To handle the missing BMI values, the research @hassan2024predictive explores three different imputation techniques. It also addresses the significant class imbalance between stroke and non-stroke cases using SMOTE.
 
 ### 2.1 Imputation Techniques
 
@@ -140,6 +148,7 @@ We will create three datasets based on the imputation methods described:
 - **Age Group-based Imputation**: Replacing missing BMI values with the mean BMI of the corresponding age group.
 
 ```{r}
+#| code-fold: true
 #| label: imputation
 #| message: false
 #| warning: false
@@ -166,6 +175,7 @@ df_age_group <- kaggle_data1 %>%
 The dataset is highly imbalanced, with only 4.87% of cases being stroke instances. This can bias machine learning models. We will use SMOTE to create balanced versions of our imputed datasets by generating synthetic minority (stroke) class samples.
 
 ```{r}
+#| code-fold: true
 #| label: smote-balancing
 
 # Ensure the stroke column is a factor for SMOTE
@@ -222,43 +232,279 @@ A detailed examination of stroke occurrences concerning different features is pr
 - (Fig. 1i) Smoking habits are examined in sub-figure (Fig. 1i), where it is observed that former or never smokers are more likely to suffer from strokes than current smokers. This finding highlights the importance of considering smoking history when assessing an individual’s stroke risk. 
 - (Fig. 1j) Lastly, shifting the focus to occupation, sub-figure (Fig. 1j) indicates that individuals working in private or self-employed sectors may have a greater likelihood of experiencing strokes compared to those in other occupations.
 
-<!-- ADD FIGURE here -->
-
-![Figure 1](images/figure01_hassan2024predictive.png)
-
-Figure 1.  Distribution of features concerning stroke occurrence. (a) through (j) present diverse aspects of
-stroke occurrences, revealing nuanced patterns. (a) and (b) demonstrate gender and age-related trends. (c)
-associates strokes with heart disease, while (d) suggests marital status correlations. (e) explores urban–rural
-disparities. (f) and (g) show links to average glucose levels and hypertension. (h) relates BMI levels to stroke
-incidence. (i) emphasizes the role of smoking history, and (j) explores potential occupational influences on
-stroke likelihood.
 
 ```{r}
-#| label: eda-plots
-#| fig-cap: "Distribution of key features by stroke status."
-#| fig-subcap: ["Age", "Average Glucose Level", "BMI", "Hypertension"]
-#| layout-ncol: 2
-
-# Using the MICE imputed dataset for visualizations
-p1 <- ggplot(df_mice, aes(x = age, fill = factor(stroke))) + 
-  geom_histogram(binwidth = 5, position = "identity", alpha = 0.6) +
-  labs(title = "Stroke Cases by Age", x = "Age", y = "Count")
-
-p2 <- ggplot(df_mice, aes(x = avg_glucose_level, fill = factor(stroke))) + 
-  geom_histogram(binwidth = 10, position = "identity", alpha = 0.6) +
-  labs(title = "Stroke Cases by Glucose Level", x = "Average Glucose Level", y = "Count")
-
-p3 <- ggplot(df_mice, aes(x = bmi, fill = factor(stroke))) + 
-  geom_histogram(binwidth = 2, position = "identity", alpha = 0.6) +
-  labs(title = "Stroke Cases by BMI", x = "BMI", y = "Count")
-
-p4 <- ggplot(df_mice, aes(x = factor(hypertension), fill = factor(stroke))) + 
-  geom_bar(position = "dodge") +
-  labs(title = "Stroke Cases by Hypertension", x = "Hypertension (0=No, 1=Yes)", y = "Count")
-
-# Arrange plots
-ggarrange(p1, p2, p3, p4, ncol = 2, nrow = 2, common.legend = TRUE, legend="bottom")
+#| code-fold: true
+# --- Prepare data for plotting ---
+# Convert binary and character variables to factors with clear labels
+df_plot <- df_mice |>
+  mutate(
+    stroke = factor(stroke, labels = c("No Stroke", "Stroke")),
+    hypertension = factor(hypertension, labels = c("No", "Yes")),
+    heart_disease = factor(heart_disease, labels = c("No", "Yes")),
+    ever_married = factor(ever_married, labels = c("No", "Yes"))
+  )
 ```
+
+```{r}
+#| code-fold: true
+#| label: generate-all-plots
+#| fig-cap: "Figure 1 Recreation: Distribution of various risk factors concerning stroke occurrence."
+#| fig-width: 12
+#| fig-height: 10
+
+# (a) [cite_start]Gender vs. Stroke [cite: 132]
+p1a <- ggplot(df_plot, aes(x = gender, fill = stroke)) +
+  geom_bar(position = "dodge") +
+  labs(title = "(a) Gender", x = NULL, y = "Count")
+
+# (b) [cite_start]Age vs. Stroke [cite: 133]
+p1b <- ggplot(df_plot, aes(x = age, fill = stroke)) +
+  geom_histogram(binwidth = 5, position = "identity", alpha = 0.7) +
+  labs(title = "(b) Age", x = "Age", y = "Count")
+
+# (c) [cite_start]Heart Disease vs. Stroke [cite: 133]
+p1c <- ggplot(df_plot, aes(x = heart_disease, fill = stroke)) +
+  geom_bar(position = "dodge") +
+  labs(title = "(c) Heart Disease", x = NULL, y = "Count")
+
+# (d) [cite_start]Marital Status vs. Stroke [cite: 134]
+p1d <- ggplot(df_plot, aes(x = ever_married, fill = stroke)) +
+  geom_bar(position = "dodge") +
+  labs(title = "(d) Ever Married", x = NULL, y = "Count")
+
+# (e) [cite_start]Residence Type vs. Stroke [cite: 135]
+p1e <- ggplot(df_plot, aes(x = Residence_type, fill = stroke)) +
+  geom_bar(position = "dodge") +
+  labs(title = "(e) Residence Type", x = NULL, y = "Count")
+  
+# (f) [cite_start]Average Glucose Level vs. Stroke [cite: 136, 137]
+p1f <- ggplot(df_plot, aes(x = avg_glucose_level, fill = stroke)) +
+  geom_histogram(binwidth = 10, position = "identity", alpha = 0.7) +
+  labs(title = "(f) Avg. Glucose Level", x = "Glucose Level", y = "Count")
+
+# (g) [cite_start]Hypertension vs. Stroke [cite: 138]
+p1g <- ggplot(df_plot, aes(x = hypertension, fill = stroke)) +
+  geom_bar(position = "dodge") +
+  labs(title = "(g) Hypertension", x = NULL, y = "Count")
+
+# (h) [cite_start]BMI vs. Stroke [cite: 139, 140]
+p1h <- ggplot(df_plot, aes(x = bmi, fill = stroke)) +
+  geom_histogram(binwidth = 2, position = "identity", alpha = 0.7) +
+  labs(title = "(h) BMI", x = "BMI", y = "Count")
+
+# (i) [cite_start]Smoking Status vs. Stroke [cite: 141, 260]
+p1i <- ggplot(df_plot, aes(y = smoking_status, fill = stroke)) +
+  geom_bar(position = "dodge") +
+  labs(title = "(i) Smoking Status", y = NULL, x = "Count")
+
+# (j) [cite_start]Work Type vs. Stroke [cite: 262]
+p1j <- ggplot(df_plot, aes(y = work_type, fill = stroke)) +
+  geom_bar(position = "dodge") +
+  labs(title = "(j) Work Type", y = NULL, x = "Count")
+
+# Combine all plots into a single figure
+ggarrange(p1a, p1b, p1c, p1d, p1e, p1f, p1g, p1h, p1i, p1j, 
+          ncol = 4, nrow = 3, 
+          common.legend = TRUE, legend = "bottom")
+```
+
+Now lets plot them individually for better visualization:
+```{r}
+#| code-fold: true
+p1a 
+p1b 
+p1c 
+p1d 
+p1e 
+p1f 
+p1g 
+p1h 
+p1i 
+p1j
+```
+
+
+#### 3.1.2 Plot Figure 2
+
+Figure 2 is the box plots of numerical features to detect outliers. It will help to give us clues about which numerical features to pay more attention to.
+
+Therefore from analysing the images we can conlude that:
+
+Figure 2(a) Age: Shows no points beyond the whiskers. This indicates that there are no statistical outliers in the age data. The ages of individuals in the dataset fall within a typical, expected range without extreme values.
+
+Figure 2(b) BMI: The BMI box plot displays numerous red dots above the top whisker. These points represent outliers, indicating that a notable portion of individuals in the dataset have a Body Mass Index significantly higher than the majority of the population.
+
+Figure 2(c) Average Glucose Level: Similar to the BMI plot, this visualization shows many red dots extending far above the top whisker. This demonstrates a "notable presence of outliers" for average glucose level, meaning many individuals have blood sugar levels that are exceptionally high compared to the central tendency of the data.
+
+```{r}
+#| label: generate-fig2
+#| fig-cap: "Figure 2 Recreation: Box plots for Age, BMI, and Average Glucose Level to assess the presence of outliers."
+#| fig-width: 10
+#| fig-height: 5
+
+# Plot (a): Box plot for Age
+p2a <- ggplot(df_mice, aes(y = age)) +
+  geom_boxplot(fill = "skyblue", color = "black", outlier.color = "red") +
+  labs(title = "(a) Age", x = "", y = "Age") +
+  theme_minimal() +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+
+# Plot (b): Box plot for BMI
+p2b <- ggplot(df_mice, aes(y = bmi)) +
+  geom_boxplot(fill = "lightgreen", color = "black", outlier.color = "red") +
+  labs(title = "(b) BMI", x = "", y = "BMI") +
+  theme_minimal() +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+  
+# Plot (c): Box plot for Average Glucose Level
+p2c <- ggplot(df_mice, aes(y = avg_glucose_level)) +
+  geom_boxplot(fill = "lightcoral", color = "black", outlier.color = "red") +
+  labs(title = "(c) Average Glucose Level", x = "", y = "Average Glucose Level") +
+  theme_minimal() +
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank())
+
+# Combine all plots into a single figure
+ggarrange(p2a, p2b, p2c, ncol = 3)
+```
+
+Detecting and addressing these outliers might be a critical step in building an accurate and reliable model for predicting stroke incidence. Because they can negatively impact the model's performance in several key ways as example:
+
+**Improved Model Accuracy**
+
+Outliers can skew the entire dataset, disproportionately influencing the model's training process. For example, a few individuals with extremely high glucose levels could pull the model's decision-making process, causing it to overemphasize glucose as a predictor and make less accurate predictions for the majority of people with normal or moderately high levels. 
+
+By handling these outliers, the model can learn from the true, underlying patterns in the data rather than being misled by anomalous values, leading to higher overall accuracy.
+
+**Enhanced Model Robustness**
+
+A model trained on data containing outliers will not generalize well to new, unseen data that doesn't have the same outliers. This is a form of overfitting. 
+
+**Validating Statistical Assumptions**
+
+Outliers can violate the assumptions required for proper model fitting, compromising the validity of the model's results. 
+
+**Uncovering Insights or Errors**
+
+These outliers can be very insightful in itself. For example, an outlier could represent:
+
+- A data entry error (e.g., a typo in BMI or glucose level) that needs to be corrected.
+- A genuinely rare medical case that might belong to a specific high-risk subgroup.
+
+Therefore we have Identified that BMI and Average Glucose Level have a significant ammount of outliers.
+
+#### 3.1.3 plotting Fig 3
+
+```{r}
+#| code-fold: true
+# --- Prepare data for plotting Fig 3 ---
+df_plot_fig3 <- df_mice |>
+  mutate(stroke = factor(stroke, labels = c("No Stroke", "Stroke")))
+```
+
+```{r}
+#| code-fold: true
+# --- Prepare data for plotting ---
+# Reversing the factor levels will swap the default ggplot colors
+df_plot_fig3 <- df_mice |>
+  mutate(stroke = factor(stroke, labels = c("No Stroke", "Stroke")) |> 
+                  forcats::fct_rev()) # Reversing the factor levels
+```
+
+```{r}
+#| code-fold: true
+#| label: generate-fig3
+#| fig-cap: "Figure 3: Distribution plots for Age, BMI, and Average Glucose Level, colored by stroke occurrence."
+#| fig-width: 12
+#| fig-height: 4
+
+# Plot (a): Age vs. BMI
+p3a <- ggplot(df_plot_fig3, aes(x = age, y = bmi, color = stroke)) +
+  geom_point(alpha = 0.6, size = 1.5) +
+  gghighlight(stroke == "Stroke") + # Highlight stroke cases
+  labs(title = "(a) Age vs. BMI", x = "Age", y = "BMI") +
+  theme_minimal()
+
+# Plot (b): Average Glucose Level vs. Age
+p3b <- ggplot(df_plot_fig3, aes(x = avg_glucose_level, y = age, color = stroke)) +
+  geom_point(alpha = 0.6, size = 1.5) +
+  gghighlight(stroke == "Stroke") + # Highlight stroke cases
+  labs(title = "(b) Avg. Glucose Level vs. Age", x = "Average Glucose Level", y = "Age") +
+  theme_minimal()
+  
+# Plot (c): BMI vs. Average Glucose Level
+p3c <- ggplot(df_plot_fig3, aes(x = bmi, y = avg_glucose_level, color = stroke)) +
+  geom_point(alpha = 0.6, size = 1.5) +
+  gghighlight(stroke == "Stroke") + # Highlight stroke cases
+  labs(title = "(c) BMI vs. Avg. Glucose Level", x = "BMI", y = "Average Glucose Level") +
+  theme_minimal()
+```
+
+Making Figure 3
+
+```{r}
+#| code-fold: true
+# Combine all plots into a single figure to make Figure 3
+ggarrange(p3a, p3b, p3c, 
+          ncol = 3, 
+          common.legend = TRUE, legend = "bottom")
+```
+
+Display all plots individually for better visualization:
+
+```{r}
+#| code-fold: true
+p3a
+p3b
+p3c
+```
+
+#### 3.1.4 Plotting Fig 4
+
+Prepare data for correlation matrix
+
+```{r}
+#| code-fold: true
+# --- Prepare data for correlation matrix ---
+# Convert all factors to numeric representations for correlation
+# We use model.matrix to perform one-hot encoding on categorical variables
+df_numeric <- model.matrix(~.-1, data = df_mice) |>
+  as.data.frame()
+
+# Rename columns for clarity (model.matrix adds prefixes)
+colnames(df_numeric) <- gsub("gender|work_type|smoking_status|Residence_type|ever_married", "", colnames(df_numeric))
+```
+
+Generate Figure 4: Correlation heatmap with a sequential green color palette."
+
+```{r}
+#| code-fold: true
+#| label: generate-fig4
+#| fig-cap: "Figure 4: Correlation heatmap with a sequential green color palette."
+#| fig-width: 10
+#| fig-height: 10
+
+# 1. Calculate the correlation matrix
+correlation_matrix <- cor(df_numeric)
+
+# 2. Define a green sequential color palette
+# green_palette <- colorRampPalette(c("#E5F5E0", "#31A354"))(200) # Light to dark green
+green_palette <- colorRampPalette(c("#d5ffc8ff", "#245332ff"))(200) 
+
+# corrplot(correlation_matrix, method = 'number') # colorful number
+# 3. Create the heatmap with the correct palette
+corrplot(correlation_matrix, 
+         method = "color",
+         type = "full", # change to full or upper
+         order = "hclust",
+         tl.col = "black",
+         tl.srt = 45,
+         addCoef.col = "black",
+         number.cex = 0.7,
+         col = green_palette, # Use the new palette here
+         diag = FALSE)
+```
+
 
 ### 3.2 Feature Importance
 
@@ -270,6 +516,7 @@ Figure 25.  Feature importance comparison for the proposed DSE model. Featur
 imbalanced and balanced MICE-imputed datasets are displayed in (a) and (b) respectively
 
 ```{r}
+#| code-fold: true
 #| label: feature-importance
 #| fig-cap: "Feature importance for stroke prediction using a Random Forest model."
 
@@ -299,6 +546,7 @@ We will use the MICE-imputed datasets (both imbalanced and balanced) for modelin
 
 
 ```{r}
+#| code-fold: true
 #| label: tidymodels-setup
 
 # Use the MICE imputed data
@@ -331,6 +579,7 @@ recipe_spec <- recipe(stroke ~ ., data = train_imb) %>%
 We define the models used in the study.
 
 ```{r}
+#| code-fold: true
 #| label: model-definitions
 
 # 1. Baseline: Logistic Regression
@@ -356,6 +605,7 @@ We will create workflows, train the models, and evaluate their performance on th
 #### 4.3.1 Baseline Model (Logistic Regression)
 
 ```{r}
+#| code-fold: true
 #| label: train-baseline
 
 # Create a balanced data frame using a tidymodels recipe
@@ -405,6 +655,7 @@ As the paper notes, the baseline model's performance improves significantly on t
 #### 4.3.2 Advanced Models (Random Forest and XGBoost)
 
 ```{r}
+#| code-fold: true
 #| label: train-advanced
 
 # --- Random Forest ---
@@ -436,6 +687,7 @@ On the balanced dataset, XGBoost and Random Forest perform exceptionally well, a
 The paper's key contribution is a DSE model, which uses the best-performing model (Random Forest) as a meta-classifier. We can build a similar ensemble using the stacks package.
 
 ```{r}
+#| code-fold: true
 #| label: dse-model
 #| message: false
 #| warning: false

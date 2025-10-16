@@ -26,6 +26,7 @@ ul.task-list li input[type="checkbox"] {
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -366,7 +367,7 @@ div.csl-indent {
 
 <section id="article-1" class="level2">
 <h2 class="anchored" data-anchor-id="article-1">Article 1</h2>
-<p>Article title: Understanding logistic regression analysis <span class="citation" data-cites="sperandei2014understanding">(<a href="#ref-sperandei2014understanding" role="doc-biblioref">1</a>)</span></p>
+<p>Article title: Understanding logistic regression analysis<span class="citation" data-cites="sperandei2014understanding"><sup>[<a href="#ref-sperandei2014understanding" role="doc-biblioref">1</a>]</sup></span></p>
 <p>Data used: Synthetic data about the effect of a drug treatment. There are two treatments: standard and new drug treatments. Shows a binary outcome, either died or survived after drug treatment.</p>
 <p>Problem: The problem introduced in this article is needing a method to study the joint relationship between two or more predictors and the target variable. One way to solve this problem is to calculate a weighted odds ratio that accounts for all the relationships and predictors. However, as the number of predictors increases, weighted odds ratio calculations can become very complicated. Also, these calculations require only categorical variables as input and no continuous variables may be used. A solution to this problem is to use logistic regression.</p>
 <p>Solution to problem: - Article explains what logistic regression is useful for. Advantages are that it can be used when there are more than two predictors and we want to analyze how they all simultaneously affect the target variable. Also useful for when we have any number of continuous predictors. - Gives the logistic regression model equation and explains the meaning of all variables (intercept, slops, and symbols). The outcome in the model (left hand side of equation) is the log of the odds. The paper goes into detail about how to interpret coefficients in the model; you must take the exponentials of the coefficients to understand the chances (the probability) of an event happening (the event in this paper is death).</p>
@@ -375,7 +376,7 @@ div.csl-indent {
 </section>
 <section id="article-2" class="level2">
 <h2 class="anchored" data-anchor-id="article-2">Article 2</h2>
-<p>Article used: Binary logistic regression analysis of factors affecting urban road traffic safety. <span class="citation" data-cites="chen2024binary">(<a href="#ref-chen2024binary" role="doc-biblioref">2</a>)</span></p>
+<p>Article used: Binary logistic regression analysis of factors affecting urban road traffic safety.<span class="citation" data-cites="chen2024binary"><sup>[<a href="#ref-chen2024binary" role="doc-biblioref">2</a>]</sup></span></p>
 <p>Problem: The introduction features a literature review establishing relevance of the topic. Several studies about traffic accidents are discussed and cited. Traffic accidents are becoming more common as traffic increases due to population increases. Researchers aim to find which factors in traffic are more closely associated with the occurrence of traffic accidents.</p>
 <p>Solution: The researchers use a binary logistic regression model to study which factors are more correlated to the occurrence of traffic accidents. The advantages of a binary logistic regression are discussed. Logistic regression allows researchers to make predictions about probability of a dependent variable being sorted into a certain class. Logistic regression also allows for the researchers to determine which predictors more significantly impact the outcome variable. To set up the study, researchers defined the dependent variable, y, as a binary outcome of either no accident (value of 0) or presence of an accident (value of 1). The independent variables are defined as 25 factors that are grouped under four categories consisting of environmental factors, driver attributes, road attributes, and vehicle factors. Before analyzing the data, it was preprocessed to eliminate outliers, normalize all predictor values to similar scales, eliminate redundancy, Then, the predictors were run through a multicollinearity test to determine if any needed to be excluded from the model; none of the factors showed significant multicollinearity and all 25 were kept in the model. The calculation used for collinearity involved the correlation coefficient, R, tolerance (T), and variance inflation factor (V).</p>
 <p>Results: A binary logistic regression model was fitted to the data, and it was found that the model fit well. To assess the goodness of fit, the determination coefficient, R^2, value was calculated. The strongest predictors of a traffic incident were found to be driver behavior, weather, road conditions, and lighting.</p>
@@ -383,12 +384,12 @@ div.csl-indent {
 <p>Dataset: The original data was sourced from the International Transport Forum with 5350 datapoints. After data preprocessing, the data was reduced to 3500 data points.</p>
 <section id="references" class="level3">
 <h3 class="anchored" data-anchor-id="references">References</h3>
-<div id="refs" class="references csl-bib-body" role="list">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
 <div id="ref-sperandei2014understanding" class="csl-entry" role="listitem">
-<div class="csl-left-margin">1. </div><div class="csl-right-inline">Sperandei S. Understanding logistic regression analysis. Biochemia medica. 2014;24(1):12–8. </div>
+1. Sperandei, S. (2014). Understanding logistic regression analysis. <em>Biochemia Medica</em>, <em>24</em>(1), 12–18.
 </div>
 <div id="ref-chen2024binary" class="csl-entry" role="listitem">
-<div class="csl-left-margin">2. </div><div class="csl-right-inline">Chen Y, You P, Chang Z. Binary logistic regression analysis of factors affecting urban road traffic safety. Advances in Transportation Studies. 2024;3. </div>
+2. Chen, Y., You, P., &amp; Chang, Z. (2024). Binary logistic regression analysis of factors affecting urban road traffic safety. <em>Advances in Transportation Studies</em>, <em>3</em>.
 </div>
 </div>
 

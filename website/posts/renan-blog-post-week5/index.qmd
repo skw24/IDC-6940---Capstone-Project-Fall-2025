@@ -54,6 +54,7 @@ If you believe you’ve found a bug in renv, please file a bug (and, if possible
 Get the packages setup:
 
 ```{r setup}
+#| code-fold: true
 #| output: false
 library(tidyverse)
 library(dplyr)
@@ -71,6 +72,7 @@ library(readr)
 This should find the path to the datasets folder programatically.
 
 ```{r}
+#| code-fold: true
 find_git_root <- function(start = getwd()) {
   path <- normalizePath(start, winslash = "/", mustWork = TRUE)
   while (path != dirname(path)) {
@@ -89,6 +91,7 @@ datasets_path <- file.path(repo_root, "datasets")
 Now we define the dataset we want to load, healthcare-dataset-stroke-data.csv will be inside kaggle-healthcare-dataset-stroke-data.
 
 ```{r}
+#| code-fold: true
 #| output: false
 kaggle_dataset_path <- file.path(datasets_path, "kaggle-healthcare-dataset-stroke-data/healthcare-dataset-stroke-data.csv")
 
@@ -98,6 +101,7 @@ kaggle_data1 = read_csv(kaggle_dataset_path, show_col_types = FALSE)
 Exploring the dataset, BMI is not stored as numeric value also the NA fields are stored as text "N/A".
 
 ```{r}
+#| code-fold: true
 head(kaggle_data1)
 
 # Count total NAs per column
@@ -107,6 +111,7 @@ colSums(is.na(kaggle_data1))
 Apparently seems there is no NA values. Let's continue.
 
 ```{r}
+#| code-fold: true
 # overall
 summary(kaggle_data1)
 glimpse(kaggle_data1)
@@ -117,6 +122,7 @@ Summary give some interesting insights but glimpse shows that there are NA value
 Now lets explore the Categorical and Numeric variables.
 
 ```{r}
+#| code-fold: true
 # check categorical variables
 library(dplyr)
 library(tidyr)
@@ -147,6 +153,7 @@ kaggle_data1[, cat_vars] %>%
 Its pretty interesting, now lets see what happens with the numeric variables
 
 ```{r}
+#| code-fold: true
 # Check Numeric Variables - id, age, avg_glucose_level, bmi
 kaggle_data1 %>%
   select_if(is.numeric) %>%
@@ -156,6 +163,7 @@ kaggle_data1 %>%
 We need to deal with the BMI data which has missing values and its not stored as numerical.
 
 ```{r}
+#| code-fold: true
 # unique(kaggle_data1$bmi)
 kaggle_data2 <- kaggle_data1 %>%
   mutate(bmi = na_if(bmi, "N/A")) %>%   # Convert "N/A" string to NA
