@@ -1,7 +1,8 @@
 ---
 title: "Literature Review"
 listing:
-  contents: posts
+  contents: 
+    - "posts/*/index.qmd" # posts
 #   sort: "date desc"
   type: default
   categories: true

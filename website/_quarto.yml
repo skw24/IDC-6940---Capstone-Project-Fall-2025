@@ -10,7 +10,7 @@ website:
   navbar:
     tools:
       - icon: github
-        href: https://capstone4ds.github.io/
+        href: https://github.com/renanmb/IDC-6940---Capstone-Project-Fall-2025
     left:
       - href: index.qmd
         text: Home

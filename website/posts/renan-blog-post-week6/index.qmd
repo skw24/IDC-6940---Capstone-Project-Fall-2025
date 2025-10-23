@@ -738,7 +738,6 @@ This document successfully reproduced the core findings of the study "Predictive
 The DSE model's ability to combine the strengths of multiple algorithms makes it an excellent candidate for real-world clinical applications, potentially aiding in the early detection of stroke and improving patient outcomes.
 
 
-
 ### References
 
 ::: {#refs}
