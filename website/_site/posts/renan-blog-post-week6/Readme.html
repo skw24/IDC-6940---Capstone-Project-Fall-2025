@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Achraf Cohen – IDC-6940 - Capstone Project Fall-2025</title>
+<title>readme – IDC-6940 - Capstone Project Fall-2025</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -34,6 +34,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-2fef5ea3f8957b3e4ecc936fc74692ca.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
@@ -280,49 +281,81 @@ ul.task-list li input[type="checkbox"] {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#notes-on-project-week-6" id="toc-notes-on-project-week-6" class="nav-link active" data-scroll-target="#notes-on-project-week-6">Notes on project Week 6</a>
+  <ul class="collapse">
+  <li><a href="#features-correlation-matrix" id="toc-features-correlation-matrix" class="nav-link" data-scroll-target="#features-correlation-matrix">Features Correlation Matrix</a></li>
+  <li><a href="#sparsity-matrix" id="toc-sparsity-matrix" class="nav-link" data-scroll-target="#sparsity-matrix">Sparsity Matrix</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
-<main class="content column-page" id="quarto-document-content">
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
 
 
 
 
 
-<hr>
-<div class="quarto-about-trestles column-page">
-  <div class="about-entity">
-    <img src="avatar.jpg" class="about-image
-  round " style="height: 20em; width: 20em;">
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Achraf Cohen</h1>
-<p class="subtitle lead">Associate Professor of Statistics/Data Science</p>
-</div>
-<div class="quarto-title-meta column-page">
-  </div>
-</header>
-    <div class="about-links">
-  <a href="mailto:acohen@uwf.edu" "="" class="about-link" rel="" target="">
-    <i class="bi bi-envelope"></i>
-     <span class="about-link-text">Email</span>
-  </a>
-</div>
-  </div>
-  <div class="about-contents"><div id="about">
-<p>I’m <a href="https://pages.uwf.edu/acohen/index.html">Achraf Cohen | Dr.&nbsp;Achraf Cohen</a> I am a statistician who loves collaborative work, and educating students about statistics and data science. Some of the best statistical ideas were originated from practical problems and situations.</p>
-<section id="education" class="level2">
-<h2 data-anchor-id="education">Education</h2>
-<p>PhD in Applied Mathematics/Statistics | University of Angers, France</p>
-<p><br></p>
+<section id="notes-on-project-week-6" class="level1">
+<h1>Notes on project Week 6</h1>
+<section id="features-correlation-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="features-correlation-matrix">Features Correlation Matrix</h2>
+<p>Missing the Features Correlation Matrix, it is on the Page 6 of the paper.</p>
+<p>Figure 4.  Features correlation heatmap for the dataset. Color intensity indicates the strength and direction of correlations, aiding in the identification of potential patterns and dependencies in the data.</p>
+</section>
+<section id="sparsity-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="sparsity-matrix">Sparsity Matrix</h2>
+<p>Missing the Sparsity Matrix, it is on the Page 6 of the paper.</p>
+<p>Figure 5.  Sparsity matrix for the dataset. The empty spaces found in the corresponding column signify the presence of missing data values for the specific feature.</p>
+<p>From the section 3.1 Visualizing Key Features</p>
+<!-- ADD FIGURE here -->
+<!-- ![Figure 1](images/figure01_hassan2024predictive.png)
+
+Figure 1.  Distribution of features concerning stroke occurrence. (a) through (j) present diverse aspects of
+stroke occurrences, revealing nuanced patterns. (a) and (b) demonstrate gender and age-related trends. (c)
+associates strokes with heart disease, while (d) suggests marital status correlations. (e) explores urban–rural
+disparities. (f) and (g) show links to average glucose levels and hypertension. (h) relates BMI levels to stroke
+incidence. (i) emphasizes the role of smoking history, and (j) explores potential occupational influences on
+stroke likelihood. -->
+<!-- ```{r}
+#| code-fold: true
+#| label: eda-plots
+#| fig-cap: "Distribution of key features by stroke status."
+#| fig-subcap: ["Age", "Average Glucose Level", "BMI", "Hypertension"]
+#| layout-ncol: 2
+
+# Using the MICE imputed dataset for visualizations
+p1 <- ggplot(df_mice, aes(x = age, fill = factor(stroke))) + 
+  geom_histogram(binwidth = 5, position = "identity", alpha = 0.6) +
+  labs(title = "Stroke Cases by Age", x = "Age", y = "Count")
+
+p2 <- ggplot(df_mice, aes(x = avg_glucose_level, fill = factor(stroke))) + 
+  geom_histogram(binwidth = 10, position = "identity", alpha = 0.6) +
+  labs(title = "Stroke Cases by Glucose Level", x = "Average Glucose Level", y = "Count")
+
+p3 <- ggplot(df_mice, aes(x = bmi, fill = factor(stroke))) + 
+  geom_histogram(binwidth = 2, position = "identity", alpha = 0.6) +
+  labs(title = "Stroke Cases by BMI", x = "BMI", y = "Count")
+
+p4 <- ggplot(df_mice, aes(x = factor(hypertension), fill = factor(stroke))) + 
+  geom_bar(position = "dodge") +
+  labs(title = "Stroke Cases by Hypertension", x = "Hypertension (0=No, 1=Yes)", y = "Count")
+
+# Arrange plots
+ggarrange(p1, p2, p3, p4, ncol = 2, nrow = 2, common.legend = TRUE, legend="bottom")
+``` -->
 
 
 </section>
-</div></div>
-</div>
-
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -340,6 +373,13 @@ ul.task-list li input[type="checkbox"] {
       window.document.body.appendChild(a);
     }
     setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
     const isCodeAnnotation = (el) => {
       for (const clz of el.classList) {
         if (clz.startsWith('code-annotation-')) {                     

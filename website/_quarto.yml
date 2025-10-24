@@ -1,12 +1,16 @@
 project:
   type: website
 
+execute:
+  # Point to the R environment under website
+  renv-path: website/renv
+  
 website:
   title: "IDC-6940 - Capstone Project Fall-2025"
   navbar:
     tools:
       - icon: github
-        href: https://capstone4ds.github.io/
+        href: https://github.com/renanmb/IDC-6940---Capstone-Project-Fall-2025
     left:
       - href: index.qmd
         text: Home
@@ -29,6 +33,7 @@ format:
     css: styles.css
     toc: true
 
-csl: national-library-of-medicine.csl 
+# csl: national-library-of-medicine.csl 
+csl: apa-numeric-superscript-brackets.csl 
 
 

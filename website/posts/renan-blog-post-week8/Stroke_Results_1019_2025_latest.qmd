@@ -1,0 +1,1069 @@
+---
+title: "Reproducing Steve's Code - Stroke_results_1019_2025_latest"
+description: "Trying to replicate the Stroke_results_1019_2025_latest"
+author:
+  - name: Renan Monteiro Barbosa
+    url: https://github.com/renanmb
+    affiliation: Master of Data Science Program @ The University of West Florida (UWF)
+    # affiliation-url: https://ucsb-meds.github.io/
+# date: 10-24-2022
+categories: [coding, week 8, renan]
+# citation:
+#   url: https://samanthacsik.github.io/posts/2022-10-24-my-blog-post/
+image: images/spongebob-imagination.jpg
+draft: false
+bibliography: references.bib
+link-citations: true
+---
+
+On this document I try to replicate Steve code: **Stroke_Results_1019_2025_latest_440PM_SW_For_Group.R**
+
+
+
+## 1. Setup and Data Loading
+
+First we need to install all packages, system dependencies and solve conflicts to produce a new renv.lock file.
+
+### 1.1 Load Libraries
+
+Install packages if necessary:
+
+```{r}
+#| code-fold: true
+#| label: install-packages
+
+# Run this once to install all the necessary packages
+# install.packages("dplyr")
+# install.packages("car")
+# install.packages("ResourceSelection")
+# install.packages("caret")
+# install.packages("rcompanion")
+# install.packages("pROC")
+# install.packages("cvAUC")
+```
+
+Load Libraries:
+
+```{r setup}
+#| code-fold: true
+#| message: false
+#| warning: false
+
+# For data manipulation and visualization
+library(tidyverse)
+library(ggplot2)
+library(corrplot)
+library(knitr)
+library(ggpubr)
+
+# For data preprocessing and modeling
+library(mice)
+library(ROSE) # For SMOTE
+library(ranger) # A fast implementation of random forests
+
+# For stacking/ensemble models
+library(stacks)
+library(tidymodels)
+
+library(themis)
+library(gghighlight)
+
+library(pscl)
+library(dplyr)
+library(car)
+library(ResourceSelection)
+library(caret)
+library(rcompanion)
+library(Hmisc)
+library(pROC)
+library(cvAUC)
+
+# Set seed for reproducibility
+set.seed(123)
+```
+
+#### 1.1.1 Possible Issues and conflicts to resolve
+
+```{{bash}}
+#| code-fold: true
+> # For data manipulation and visualization
+> library(tidyverse)
+library(ggplot2)
+library(corrplot)
+library(knitr)
+library(ggpubr)
+
+# For data preprocessing and modeling
+library(mice)
+library(ROSE) # For SMOTE
+library(ranger) # A fast implementation of random forests
+
+# For stacking/ensemble models
+library(stacks)
+library(tidymodels)
+
+library(themis)
+library(gghighlight)
+
+library(pscl)
+library(dplyr)
+library(car)
+library(ResourceSelection)
+library(caret)
+library(rcompanion)
+library(Hmisc)
+library(pROC)
+library(cvAUC)
+
+# Set seed for reproducibility
+set.seed(123)
+── Attaching core tidyverse packages ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.2     ✔ tibble    3.3.0
+✔ lubridate 1.9.4     ✔ tidyr     1.3.1
+✔ purrr     1.1.0     
+── Conflicts ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+> library(ggplot2)
+> library(corrplot)
+corrplot 0.95 loaded
+> library(knitr)
+> library(ggpubr)
+> 
+> # For data preprocessing and modeling
+> library(mice)
+
+Attaching package: ‘mice’
+
+The following object is masked from ‘package:stats’:
+
+    filter
+
+The following objects are masked from ‘package:base’:
+
+    cbind, rbind
+
+> library(ROSE) # For SMOTE
+Loaded ROSE 0.0-4
+
+> library(ranger) # A fast implementation of random forests
+ranger 0.17.0 using 2 threads (default). Change with num.threads in ranger() and predict(), options(Ncpus = N), options(ranger.num.threads = N) or environment variable R_RANGER_NUM_THREADS.
+> 
+> # For stacking/ensemble models
+> library(stacks)
+Registered S3 method overwritten by 'butcher':
+  method                 from    
+  as.character.dev_topic generics
+> library(tidymodels)
+── Attaching packages ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidymodels 1.4.1 ──
+✔ broom        1.0.9     ✔ rsample      1.3.1
+✔ dials        1.4.2     ✔ tailor       0.1.0
+✔ infer        1.0.9     ✔ tune         2.0.0
+✔ modeldata    1.5.1     ✔ workflows    1.3.0
+✔ parsnip      1.3.3     ✔ workflowsets 1.1.1
+✔ recipes      1.3.1     ✔ yardstick    1.3.2
+── Conflicts ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── tidymodels_conflicts() ──
+✖ scales::discard() masks purrr::discard()
+✖ mice::filter()    masks dplyr::filter(), stats::filter()
+✖ recipes::fixed()  masks stringr::fixed()
+✖ dplyr::lag()      masks stats::lag()
+✖ yardstick::spec() masks readr::spec()
+✖ recipes::step()   masks stats::step()
+• Use tidymodels_prefer() to resolve common conflicts.
+> 
+> library(themis)
+> library(gghighlight)
+> 
+> library(pscl)
+Classes and Methods for R originally developed in the
+Political Science Computational Laboratory
+Department of Political Science
+Stanford University (2002-2015),
+by and under the direction of Simon Jackman.
+hurdle and zeroinfl functions by Achim Zeileis.
+> library(dplyr)
+> library(car)
+Loading required package: carData
+
+Attaching package: ‘car’
+
+The following object is masked from ‘package:dplyr’:
+
+    recode
+
+The following object is masked from ‘package:purrr’:
+
+    some
+
+> library(ResourceSelection)
+ResourceSelection 0.3-6          2023-06-27
+> library(caret)
+Loading required package: lattice
+
+Attaching package: ‘caret’
+
+The following objects are masked from ‘package:yardstick’:
+
+    precision, recall, sensitivity, specificity
+
+The following object is masked from ‘package:rsample’:
+
+    calibration
+
+The following object is masked from ‘package:purrr’:
+
+    lift
+
+> library(rcompanion)
+
+Attaching package: ‘rcompanion’
+
+The following object is masked from ‘package:yardstick’:
+
+    accuracy
+
+> library(Hmisc)
+
+Attaching package: ‘Hmisc’
+
+The following object is masked from ‘package:parsnip’:
+
+    translate
+
+The following objects are masked from ‘package:dplyr’:
+
+    src, summarize
+
+The following objects are masked from ‘package:base’:
+
+    format.pval, units
+
+> library(pROC)
+Type 'citation("pROC")' for a citation.
+
+Attaching package: ‘pROC’
+
+The following objects are masked from ‘package:stats’:
+
+    cov, smooth, var
+
+> library(cvAUC)
+> 
+> # Set seed for reproducibility
+> set.seed(123)
+```
+
+
+### 1.2 Load Data
+
+Will be using my original Dataset as well Steve's Dataset and compare for differences.
+
+- **Renan**: kaggle_data1
+- **Steve**: stroke1
+
+#### 1.2.1 Renan Dataset
+
+Below will be loading the healthcare-dataset-stroke-data.csv and performing necessary changes to the dataset and loading into the DataFrame: kaggle_data1
+
+```{r}
+#| code-fold: true
+#| output: false
+find_git_root <- function(start = getwd()) {
+  path <- normalizePath(start, winslash = "/", mustWork = TRUE)
+  while (path != dirname(path)) {
+    if (dir.exists(file.path(path, ".git"))) return(path)
+    path <- dirname(path)
+  }
+  stop("No .git directory found — are you inside a Git repository?")
+}
+
+repo_root <- find_git_root()
+datasets_path <- file.path(repo_root, "datasets")
+kaggle_dataset_path <- file.path(datasets_path, "kaggle-healthcare-dataset-stroke-data/healthcare-dataset-stroke-data.csv")
+kaggle_data1 = read_csv(kaggle_dataset_path, show_col_types = FALSE)
+
+# unique(kaggle_data1$bmi)
+kaggle_data1 <- kaggle_data1 %>%
+  mutate(bmi = na_if(bmi, "N/A")) %>%   # Convert "N/A" string to NA
+  mutate(bmi = as.numeric(bmi))         # Convert from character to numeric
+
+# Remove the 'Other' gender row and the 'id' column
+kaggle_data1 <- kaggle_data1 %>%
+  filter(gender != "Other") %>%
+  select(-id) %>%
+  mutate_if(is.character, as.factor) # Convert character columns to factors for easier modeling
+```
+
+#### 1.2.1 Steve Dataset
+
+Below will be loading the stroke.csv and performing necessary changes to the dataset and loading into the DataFrame: stroke1
+
+```{r}
+#| code-fold: true
+# Reading the datafile in (the same one you got for us Renan)#
+steve_dataset_path <- file.path(datasets_path, "steve/stroke.csv")
+stroke1 = read_csv(steve_dataset_path, show_col_types = FALSE)
+```
+
+### 1.3 Prepare Dataset
+
+
+```{r}
+#| output: false
+head(stroke1)
+nrow(stroke1)
+summary(stroke1)
+count_tables <- lapply(stroke1, table)
+count_tables
+```
+
+Part 1:  preparing the data
+
+- **Smoking Status** - remove unknown
+- **bmi** - remove N/A
+- **Work type** - remove children
+- **age** - create numerical variable with 2 places after the decimal
+- **gender** - remove other
+
+```{r}
+stroke1[stroke1 == "N/A"] <- NA
+stroke1[stroke1 == "Unknown"] <- NA
+stroke1[stroke1 == "children"] <- NA
+stroke1[stroke1 == "other"] <- NA
+
+stroke1$bmi <- round(as.numeric(stroke1$bmi), 2)
+
+stroke1$gender[stroke1$gender == "Male"] <- 1
+stroke1$gender[stroke1$gender == "Female"] <- 2
+stroke1$gender <- as.numeric(stroke1$gender)
+
+stroke1$ever_married[stroke1$ever_married == "Yes"] <- 1
+stroke1$ever_married[stroke1$ever_married == "No"] <- 2
+stroke1$ever_married <- as.numeric(stroke1$ever_married)
+
+stroke1$work_type[stroke1$work_type == "Govt_job"] <- 1
+stroke1$work_type[stroke1$work_type == "Private"] <- 2
+stroke1$work_type[stroke1$work_type == "Self-employed"] <- 3
+stroke1$work_type[stroke1$work_type == "Never_worked"] <- 4
+stroke1$work_type <- as.numeric(stroke1$work_type)
+
+stroke1$Residence_type[stroke1$Residence_type == "Urban"] <- 1
+stroke1$Residence_type[stroke1$Residence_type == "Rural"] <- 2
+stroke1$Residence_type <- as.numeric(stroke1$Residence_type)
+
+stroke1$avg_glucose_level <- as.numeric(stroke1$avg_glucose_level)
+
+stroke1$heart_disease <- as.numeric(stroke1$heart_disease)
+
+stroke1$hypertension <- as.numeric(stroke1$hypertension)
+
+stroke1$age <- round(as.numeric(stroke1$age), 2)
+
+stroke1$stroke <- as.numeric(stroke1$stroke)
+
+stroke1$smoking_status[stroke1$smoking_status == "never smoked"] <- 1
+stroke1$smoking_status[stroke1$smoking_status == "formerly smoked"] <- 2
+stroke1$smoking_status[stroke1$smoking_status == "smokes"] <- 3
+stroke1$smoking_status <- as.numeric(stroke1$smoking_status)
+
+stroke1 <- stroke1[, !(names(stroke1) %in% "id")]
+stroke1_clean <- na.omit(stroke1)
+```
+
+
+converted all columns to numeric and removed id
+
+```{r}
+#| output: false
+# converted all columns to numeric and removed id
+str(stroke1_clean)
+nrow(stroke1_clean)
+LR_stroke1 <- stroke1_clean
+str(LR_stroke1)
+count_tables <- lapply(LR_stroke1, table)
+count_tables
+```
+
+## 2. Apply Logistic Regression
+
+Part 2:Create and Run the Logistic Regression model from the  dataset
+
+```{r}
+# Part 2:Create and Run the Logistic Regression model from the  dataset
+model <- glm(stroke ~ gender + age + hypertension + heart_disease + ever_married + work_type + Residence_type + avg_glucose_level + bmi + smoking_status, data=LR_stroke1, family = binomial)
+summary(model)
+```
+
+::: {.callout-important}
+## Issue - Unbalanced Data set
+
+The dataset is oversampling stroke rate by 77%.
+
+:::
+
+Issue - Unbalanced Data set
+
+The $stroke rate = 180/3357 = 054%$ . But the stroke rate in the US is 3.1% by the CDC, AHA, and the NCHS.
+
+The dataset is oversampling stroke rate by 77%. We can either SMOTE, under/over sample....but too much time
+
+Best way is to recalibrate the intercept for this model (Ie change it here) so it can be used from now on
+
+```{r}
+# Issue _ Unbalanced Data set #
+# The stroke rate = 180/3357 = 054%. But the stroke rate in the US is 3.1% by the CDC, AHA, and the NCHS. #
+# The dataset is oversampling stroke rate by 77%. We can either SMOTE, under/over sample....but too much time #
+# Best way is to recalibrate the intercept for this model (Ie change it here) so it can be used from now on #
+ds_prev <- .054
+pop_prev <- .031
+log_odds_ds <- qlogis(ds_prev)
+log_odds_pop <- qlogis(pop_prev)
+offset <- log_odds_pop - log_odds_ds
+coefs <- coef(model)
+coefs[1] <- coefs[1] + offset
+print(coefs)
+```
+
+Original Intercept Coeff = -8.426854231 
+
+Changed intercept Coefficent to take into account current stroke rate or 3.1% = -9.005873116
+
+all the other intercepts remain the same
+
+## 3. Testing logistic Regression Model Assumptions
+
+Part 3: Testing logistic Regression Model Assumptions
+
+There are several assumptions for Logistic Regression. They are:
+
+1. The Dependent Variable is binary (i.e, 0 or 1)
+2. There is a linear relationship between th logit of the outcome and each predictor
+3. There are NO high leverage outliers in the predictors
+4. There is No high multicollinearity (ie strong correlations) between predictors
+
+Now to test each assumption
+
+### 3.1 Testing Assumption 1
+
+Testing Assumption 1: The Dependent Variable is binary (0 or 1)
+
+```{r}
+unique(LR_stroke1$stroke)
+```
+
+### 3.2 Testing Assumption 2
+
+Testing Assumption 2: There is a linear relationship between the outcome variable and each predictor
+
+first,  adjust all predictors so all values are positive
+
+Conclusion: For all continuous variables , ageadj, avg_glucose_leveladj, and bniadj, the residual plots show linearity
+
+Conclusion: all the other predictors are categorical, with the magenta line flat, and the values clustering around certain values, they are also appropriate for logistic regression
+
+Conclusion for assumption 2 - Linearity is met
+
+```{r}
+LR_stroke1$genderadj <- LR_stroke1$gender + abs(min(LR_stroke1$gender)) + 1
+
+LR_stroke1$ageadj <- LR_stroke1$age + abs(min(LR_stroke1$age)) + 1
+
+LR_stroke1$hypertensionadj <- LR_stroke1$hypertension + abs(min(LR_stroke1$hypertension)) + 1
+
+LR_stroke1$heart_diseaseadj <- LR_stroke1$heart_disease + abs(min(LR_stroke1$hypertension)) + 1
+
+LR_stroke1$ever_marriedadj <- LR_stroke1$ever_married + abs(min(LR_stroke1$ever_married)) + 1
+
+LR_stroke1$work_typeadj <- LR_stroke1$work_type + abs(min(LR_stroke1$work_type)) + 1
+
+LR_stroke1$Residence_typeadj <- LR_stroke1$Residence_type + abs(min(LR_stroke1$Residence_type)) + 1
+
+LR_stroke1$avg_glucose_leveladj <- LR_stroke1$avg_glucose_level + abs(min(LR_stroke1$avg_glucose_level)) + 1
+
+LR_stroke1$bmiadj <- LR_stroke1$bmi + abs(min(LR_stroke1$bmi)) + 1
+
+LR_stroke1$smoking_statusadj <- LR_stroke1$smoking_status + abs(min(LR_stroke1$smoking_status)) + 1
+
+str(LR_stroke1)
+StrokeAdj <- LR_stroke1
+
+StrokeAdj <- StrokeAdj[ , !(names(StrokeAdj) %in% c("gender", "age", "hypertension", "heart_disease", "ever_married", "work_type", "Residence_type", "avg_glucose_level", "bmi", "smoking_status")) ]
+```
+
+Fit the model
+
+```{r}
+mod.2 <- glm(stroke ~ genderadj + ageadj + hypertensionadj + heart_diseaseadj + ever_marriedadj + work_typeadj + Residence_typeadj + avg_glucose_leveladj + bmiadj + smoking_statusadj, data=StrokeAdj, family=binomial)
+# Plot Residuals
+residualPlots(mod.2)
+```
+
+### 3.3 Testing Assumption 3
+
+Testing Assumption 3: assess influential outliers using car package and influencePlot
+
+
+```{r}
+alias(model)
+# install.packages("Hmisc")
+# library(Hmisc)
+rcorr(as.matrix(LR_stroke1))
+```
+
+
+```{r}
+# install.packages("car")
+# library(car)
+influencePlot(model)
+```
+
+Cooks D ranges from 0 to .0122 
+
+While the ideal size is 4/N (4/3357 = 0.012), its far outside the danger zone of .5
+
+Conclusion: Assumption 3 is met - No substantial outliers
+
+### 3.4 Testing Assumption 4
+
+Testing Assumption 4 : Multicollinearity using vif in the care package
+
+```{r}
+vif(model)
+```
+
+Conclusion. All vif values are below  5 or 10. Ideally most values should be around 1. Range for all
+
+the predictors is between: 1.01 - 1.21. Way below the danger threshold of 5 to 10. 
+
+Conclusion: No Multicollinearity
+
+Final Conclusion: All4 assumptions are met, logistic regression is a valid model
+
+
+## 4 Analysis of the Model
+
+Part 4: Analysis of the Model
+
+There are 2 issues with the model. Fit and Predictive Capability
+
+### 4.1 Use Hosmer-lemesho and Naglekerke R
+
+Part 1  fit. Use Hosmer-lemesho and Naglekerke R for non technical audience
+
+```{r}
+# install.packages("ResourceSelection")
+# library(ResourceSelection)
+hoslem.test(model$y, fitted(model), g = 10)
+```
+
+
+```{r}
+# install.packages("rcompanion")
+# library(rcompanion)
+nagelkerke(model)
+```
+
+### 4.2 Predictive Capability
+
+Part 2 - Predictive Capability
+
+```{r}
+# install.packages("pROC")
+# library(pROC)
+probs <- predict(model, type = "response")
+roc_obj <- roc(LR_stroke1$stroke, probs)
+auc(roc_obj)
+```
+
+Predict AUC cross validation
+
+::: {.callout-note}
+## Need to implement AUC cross validation
+
+Could not understand yet how to implement the AUC cross validation
+
+:::
+
+```{r}
+# Predict AUC cross validation
+# install.packages("cvAUC")
+# library(cvAUC)
+```
+
+
+Confusion Matrix
+
+```{r}
+# Confusion Matrix
+LR_stroke1$gender <- factor(LR_stroke1$gender)
+LR_stroke1$hypertension <- factor(LR_stroke1$hypertension)
+LR_stroke1$heart_disease <- factor(LR_stroke1$heart_disease)
+LR_stroke1$ever_married <- factor(LR_stroke1$ever_married)
+LR_stroke1$work_type <- factor(LR_stroke1$work_type)
+LR_stroke1$Residence_type <- factor(LR_stroke1$Residence_type)
+LR_stroke1$smoking_status <- factor(LR_stroke1$smoking_status)
+LR_stroke1$stroke <- factor(LR_stroke1$stroke)
+```
+
+fit logistic regression model
+
+```{r}
+# fit logistic regression model
+model_CM <- glm(stroke ~ gender + age + hypertension + heart_disease + ever_married + work_type + Residence_type + avg_glucose_level + bmi + smoking_status, data=LR_stroke1, family = binomial)
+```
+
+Get Predicted Probabilities for each observation
+
+```{r}
+# Get Predicted Probabilities for each observation
+pred_prob <- predict(model_CM, type = "response")
+```
+
+create 10 confusion matrices at threshold intervals between 1 and 0 to create a ROC
+
+Classify prediction using a threshold (0.5 is common but can adjust)
+
+IF 1 row is all 0's then model doesn't show any predictability
+
+**At threshold of around 1.0**
+
+```{r}
+# create 10 confusion matrices at threshold intervals between 1 and 0 to create a ROC
+# Classify prediction using a threshold (0.5 is common but can adjust)
+# IF 1 row is all 0's then model doesn't show any predictability
+# At threshold of around 1.0
+pred_class <- factor(ifelse(pred_prob > .99, 1, 0), levels = c(0, 1))
+conf_matrix <- confusionMatrix(pred_class, factor(LR_stroke1$stroke, levels = c("0", "1")), positive = "1")
+print(conf_matrix$table)
+```
+
+IF 1 row is all 0's then model doesn't show any predictability
+
+**At threshold of 0.9**
+
+```{r}
+# At threshold of 0.9
+pred_class <- factor(ifelse(pred_prob > 0.9, 1, 0), levels = c(0, 1))
+conf_matrix <- confusionMatrix(pred_class, factor(LR_stroke1$stroke, levels = c("0", "1")), positive = "1")
+print(conf_matrix$table)
+```
+
+IF 1 row is all 0's then model doesn't show any predictability
+
+**At threshold of 0.8**
+
+```{r}
+# At threshold of 0.8
+pred_class <- factor(ifelse(pred_prob > 0.8, 1, 0), levels = c(0, 1))
+conf_matrix <- confusionMatrix(pred_class, factor(LR_stroke1$stroke, levels = c("0", "1")), positive = "1")
+print(conf_matrix$table)
+```
+
+IF 1 row is all 0's then model doesn't show any predictability
+
+**At threshold of 0.7**
+
+```{r}
+# At threshold of 0.7
+pred_class <- factor(ifelse(pred_prob > 0.7, 1, 0), levels = c(0, 1))
+conf_matrix <- confusionMatrix(pred_class, factor(LR_stroke1$stroke, levels = c("0", "1")), positive = "1")
+print(conf_matrix$table)
+```
+
+**At threshold of 0.6**
+
+```{r}
+# At threshold of 0.6
+pred_class <- factor(ifelse(pred_prob > 0.6, 1, 0), levels = c(0, 1))
+conf_matrix <- confusionMatrix(pred_class, factor(LR_stroke1$stroke, levels = c("0", "1")), positive = "1")
+print(conf_matrix$table)
+```
+
+at threshold of 0.6 that starts the models predictability
+
+Extract precision,Recall and F1 from confusion matrix using the caret package
+
+```{r}
+# Extract precision, Recall and F1 from confusion matrix using the caret package
+precision <- conf_matrix$byClass["Pos Pred Value"] 
+recall <- conf_matrix$byClass["Sensitivity"]
+f1 <- 2 * ((precision * recall)/ (precision + recall))
+print(sprintf("F1: %f", f1))
+print(sprintf("recall: %f", recall))
+print(sprintf("precision: %f", precision))
+```
+
+**at threshold of 0.5**
+
+```{r}
+# at threshold of 0.5
+pred_class <- factor(ifelse(pred_prob > 0.5, 1, 0), levels = c(0, 1))
+conf_matrix <- confusionMatrix(pred_class, factor(LR_stroke1$stroke, levels = c("0", "1")), positive = "1")
+print(conf_matrix$table)
+```
+
+Extract precision,Recall and F1 from confusion matrix using the caret package
+
+```{r}
+# Extract precision,Recall and F1 from confusion matrix using the caret package
+precision <- conf_matrix$byClass["Pos Pred Value"] 
+recall <- conf_matrix$byClass["Sensitivity"]
+f1 <- 2 * ((precision * recall)/ (precision + recall))
+print(sprintf("F1: %f", f1))
+print(sprintf("recall: %f", recall))
+print(sprintf("precision: %f", precision))
+```
+
+**At threshold of 0.4**
+
+```{r}
+# At threshold of 0.4
+pred_class <- factor(ifelse(pred_prob > 0.4, 1, 0), levels = c(0, 1))
+conf_matrix <- confusionMatrix(pred_class, factor(LR_stroke1$stroke, levels = c("0", "1")), positive = "1")
+print(conf_matrix$table)
+```
+
+Extract precision,Recall and F1 from confusion matrix using the caret package
+
+```{r}
+# Extract precision,Recall and F1 from confusion matrix using the caret package
+precision <- conf_matrix$byClass["Pos Pred Value"] 
+recall <- conf_matrix$byClass["Sensitivity"]
+f1 <- 2 * ((precision * recall)/ (precision + recall))
+print(sprintf("F1: %f", f1))
+print(sprintf("recall: %f", recall))
+print(sprintf("precision: %f", precision))
+```
+
+**at threshold of 0.3**
+
+```{r}
+# at threshold of 0.3
+pred_class <- factor(ifelse(pred_prob > 0.3, 1, 0), levels = c(0, 1))
+conf_matrix <- confusionMatrix(pred_class, factor(LR_stroke1$stroke, levels = c("0", "1")), positive = "1")
+print(conf_matrix$table)
+```
+
+Extract precision,Recall and F1 from confusion matrix using the caret package
+
+```{r}
+# Extract precision,Recall and F1 from confusion matrix using the caret package
+precision <- conf_matrix$byClass["Pos Pred Value"] 
+recall <- conf_matrix$byClass["Sensitivity"]
+f1 <- 2 * ((precision * recall)/ (precision + recall))
+print(sprintf("F1: %f", f1))
+print(sprintf("recall: %f", recall))
+print(sprintf("precision: %f", precision))
+```
+
+**at threshold of 0.2**
+
+```{r}
+# at threshold of 0.2
+pred_class <- factor(ifelse(pred_prob > 0.2, 1, 0), levels = c(0, 1))
+conf_matrix <- confusionMatrix(pred_class, factor(LR_stroke1$stroke, levels = c("0", "1")), positive = "1")
+print(conf_matrix$table)
+```
+
+Extract precision,Recall and F1 from confusion matrix using the caret package
+
+```{r}
+# Extract precision,Recall and F1 from confusion matrix using the caret package
+precision <- conf_matrix$byClass["Pos Pred Value"] 
+recall <- conf_matrix$byClass["Sensitivity"]
+f1 <- 2 * ((precision * recall)/ (precision + recall))
+print(sprintf("F1: %f", f1))
+print(sprintf("recall: %f", recall))
+print(sprintf("precision: %f", precision))
+```
+
+
+Using the different Confusion Matrices, Create the ROC curve
+
+
+
+
+
+
+
+## Original Code
+
+Below we see the Original Code shared by Steve: **Stroke_Results_1019_2025_latest_440PM_SW_For_Group.R**
+
+```{{r}}
+install.packages("dplyr")
+install.packages("car")
+install.packages("ResourceSelection")
+install.packages("caret")
+install.packages("car")
+library(dplyr)
+library(car)
+library(ResourceSelection)
+library(caret)
+library(car)
+stroke1 <- read.csv("D:\\stroke.csv")
+head(stroke1)
+nrow(stroke1)
+summary(stroke1)
+count_tables <- lapply(stroke1, table)
+count_tables
+#-------------------------------------------Part 1:  preparing the data---------------------------------#
+# Smoking Status - remove unknown#
+#bmi - remove N/A#
+# Work type - remove children#
+# age create numerical variable with 2 places after the decimal#
+#gender -remove other#
+stroke1[stroke1 == "N/A"] <- NA
+stroke1[stroke1 == "Unknown"] <- NA
+stroke1[stroke1 == "children"] <- NA
+stroke1[stroke1 == "other"] <- NA
+stroke1$bmi <- round(as.numeric(stroke1$bmi), 2)
+stroke1$gender[stroke1$gender == "Male"] <- 1
+stroke1$gender[stroke1$gender == "Female"] <- 2
+stroke1$gender <- as.numeric(stroke1$gender)
+stroke1$ever_married[stroke1$ever_married == "Yes"] <- 1
+stroke1$ever_married[stroke1$ever_married == "No"] <- 2
+stroke1$ever_married <- as.numeric(stroke1$ever_married)
+stroke1$work_type[stroke1$work_type == "Govt_job"] <- 1
+stroke1$work_type[stroke1$work_type == "Private"] <- 2
+stroke1$work_type[stroke1$work_type == "Self-employed"] <- 3
+stroke1$work_type[stroke1$work_type == "Never_worked"] <- 4
+stroke1$work_type <- as.numeric(stroke1$work_type)
+stroke1$Residence_type[stroke1$Residence_type == "Urban"] <- 1
+stroke1$Residence_type[stroke1$Residence_type == "Rural"] <- 2
+stroke1$Residence_type <- as.numeric(stroke1$Residence_type)
+stroke1$avg_glucose_level <- as.numeric(stroke1$avg_glucose_level)
+stroke1$heart_disease <- as.numeric(stroke1$heart_disease)
+stroke1$hypertension <- as.numeric(stroke1$hypertension)
+stroke1$age <- round(as.numeric(stroke1$age), 2)
+stroke1$stroke <- as.numeric(stroke1$stroke)
+stroke1$smoking_status[stroke1$smoking_status == "never smoked"] <- 1
+stroke1$smoking_status[stroke1$smoking_status == "formerly smoked"] <- 2
+stroke1$smoking_status[stroke1$smoking_status == "smokes"] <- 3
+stroke1$smoking_status <- as.numeric(stroke1$smoking_status)
+stroke1 <- stroke1[, !(names(stroke1) %in% "id")]
+stroke1_clean <- na.omit(stroke1)
+#converted all columns to numeric and removed id#
+str(stroke1_clean)
+nrow(stroke1_clean)
+LR_stroke1 <- stroke1_clean
+str(LR_stroke1)
+count_tables <- lapply(LR_stroke1, table)
+count_tables
+#-------------------------Part 2:Create and Run the Logistic Regression model from the  dataset-------------#
+model <- glm(stroke ~ gender + age + hypertension + heart_disease + ever_married + work_type + Residence_type + avg_glucose_level + bmi + smoking_status, data=LR_stroke1, family = binomial)
+summary(model)
+# ----------------------------------------------Issue _ Unbalanced Data set--------------------------------------#
+# The stroke rate = 180/3357 = 054%. But the stroke rate in the US is 3.1% by the CDC, AHA, and the NCHS.--------#
+# The dataset is oversampling stroke rate by 77%. We can either SMOTE, under/over sample....but too much time----#
+# Best way is to recalibrate the intercept for this model (Ie change it here) so it can be used from now on------#
+ds_prev <- .054
+pop_prev <- .031
+log_odds_ds <- qlogis(ds_prev)
+log_odds_pop <- qlogis(pop_prev)
+offset <- log_odds_pop - log_odds_ds
+coefs <- coef(model)
+coefs[1] <- coefs[1] + offset
+print(coefs)
+# Original Intercept Coeff = -8.426854231#
+# Changed intercept Coefficent to take into account current stroke rate or 3.1% = -9.005873116-------------------#
+# all the other intercepts remain the same-----------------------------------------------------------------------#
+# ----------------------------------Part 3: Testing logistic Regression Model Assumptions------------------------#
+# There are several assumptions for Logistic Regression#
+# They are:#
+#(1) The Dependent Variable is binary (i.e, 0 or 1)#
+#(2) There is a linear relationship between th logit of the outcome and each predictor#
+#(3) There are NO high leverage outliers in the predictors#
+#(4) There is No high multicollinearity (ie strong correlations) between predictors#
+####################################:Now to test each assumption: ################
+# Testing Assumption 1: The Dependent Variable is binary (0 or 1)#
+unique(LR_stroke1$stroke)
+#Testing Assumption 2: There is a linear relationship between the outcome variable and each predictor
+#first,  adjust all predictors so all values are positive#
+# Conclusion: For all continuous variables , ageadj, avg_glucose_leveladj, and bniadj, the residual plots show linearity#
+# Conclusion:all the other predictors are categorical, with the magenta line flat, and the values clustering around certain values, they are also appropriate for logistic regression#
+# ---------------------------------------Conclusion for assumption 2 - Linearity is met--------------------------------#
+# Testing Assumption 3: assess influential outliers using car package and influencePlot#
+alias(model)
+install.packages("Hmisc")
+library(Hmisc)
+rcorr(as.matrix(LR_stroke1))
+install.packages("car")
+library(car)
+influencePlot(model)
+# Cooks D ranges from 0 to .0122 While the ideal size is 4/N (4/3357 = 0.012), its far outside the danger zone of .5
+#--------------------------------- Conclusion: Assumption 3 is met - No substantial outliers---------------------#
+# Testing Assumption 4 : Multicollinearity using vif in the care package#
+vif(model)
+#--------------------Conclusion. All vif values are below  5 or 10. Ideally most values should be around 1. Range for all#
+# the predictors is between: 1.01 - 1.21. Way below the danger threshold of 5 to 10. Conclusion: No Multicollinearity####
+#####################################################################################################################
+# -----------------Final Conclusion: All4 assumptions are met, logistic regression is a valid model---------------#
+####################################################################################################################
+# ---------------------------------------------Part 4: Analysis of the Model----------------------------------------#
+# -----------------------There are 2 issues with the model. Fit and Predictive Capability---------------------------#
+# ----------------Part 1  fit. Use Hosmer-lemesho and Naglekerke R for non technical audience-----------------------#
+install.packages("ResourceSelection")
+library(ResourceSelection)
+hoslem.test(model$y, fitted(model), g = 10)
+install.packages("rcompanion")
+library(rcompanion)
+nagelkerke(model)
+# -----------------------Part 2 - Predictive Capability-----------------------------------------------------------
+install.packages("pROC")
+library(pROC)
+probs <- predict(model, type = "response")
+roc_obj <- roc(LR_stroke1$stroke, probs)
+auc(roc_obj)
+# Predict AUC cross validation
+install.packages("cvAUC")
+library(cvAUC)
+# Confusion Matrix
+LR_stroke1$gender <- factor(LR_stroke1$gender)
+LR_stroke1$hypertension <- factor(LR_stroke1$hypertension)
+LR_stroke1$heart_disease <- factor(LR_stroke1$heart_disease)
+LR_stroke1$ever_married <- factor(LR_stroke1$ever_married)
+LR_stroke1$work_type <- factor(LR_stroke1$work_type)
+LR_stroke1$Residence_type <- factor(LR_stroke1$Residence_type)
+LR_stroke1$smoking_status <- factor(LR_stroke1$smoking_status)
+LR_stroke1$stroke <- factor(LR_stroke1$stroke)
+# fit logistic regression model
+model_CM <- glm(stroke ~ gender + age + hypertension + heart_disease + ever_married + work_type + Residence_type + avg_glucose_level + bmi + smoking_status, data=LR_stroke1, family = binomial)
+# Get Predicted Probabilities for each observation
+pred_prob <- predict(model_CM, type = "response")
+install.packages("caret")
+library(caret)
+# create 10 confusion matrices at threshold intervals between 1 and 0 to create a ROC
+#Classify prediction using a threshold (0.5 is common but can adjust)
+#---------------------------IF 1 row is all 0's then model doesn't show any predictability-------------------#
+# At threshold of around 1.0 #
+pred_class <- factor(ifelse(pred_prob > .99, 1, 0), levels = c(0, 1))
+conf_matrix <- confusionMatrix(pred_class, factor(LR_stroke1$stroke, levels = c("0", "1")), positive = "1")
+print(conf_matrix$table)
+#-------------------------IF 1 row is all 0's then model doesn't show any predictability-----------------------#
+# At threshold of 0.9 #
+pred_class <- factor(ifelse(pred_prob > 0.9, 1, 0), levels = c(0, 1))
+conf_matrix <- confusionMatrix(pred_class, factor(LR_stroke1$stroke, levels = c("0", "1")), positive = "1")
+print(conf_matrix$table)
+#-----------------------IF 1 row is all 0's then model doesn't show any predictability--------------------------#
+# At threshold of 0.8#
+pred_class <- factor(ifelse(pred_prob > 0.8, 1, 0), levels = c(0, 1))
+conf_matrix <- confusionMatrix(pred_class, factor(LR_stroke1$stroke, levels = c("0", "1")), positive = "1")
+print(conf_matrix$table)
+#----------------------IF 1 row is all 0's then model doesn't show any predictability---------------------------#
+# At threshold of 0.7#
+pred_class <- factor(ifelse(pred_prob > 0.7, 1, 0), levels = c(0, 1))
+conf_matrix <- confusionMatrix(pred_class, factor(LR_stroke1$stroke, levels = c("0", "1")), positive = "1")
+print(conf_matrix$table)
+# At threshold of 0.6#
+pred_class <- factor(ifelse(pred_prob > 0.6, 1, 0), levels = c(0, 1))
+conf_matrix <- confusionMatrix(pred_class, factor(LR_stroke1$stroke, levels = c("0", "1")), positive = "1")
+print(conf_matrix$table)
+################################################################################################################
+#-----------------------------at threshold of 0.6 that starts the models predictability------------------------#
+################################################################################################################
+# Extract precision,Recall and F1 from confusion matrix using the caret package #
+precision <- conf_matrix$byClass["Pos Pred Value"] 
+recall <- conf_matrix$byClass["Sensitivity"]
+f1 <- 2 * ((precision * recall)/ (precision + recall))
+print(f1)
+print(recall)
+print(precision)
+# at threshold of 0.5#
+pred_class <- factor(ifelse(pred_prob > 0.5, 1, 0), levels = c(0, 1))
+conf_matrix <- confusionMatrix(pred_class, factor(LR_stroke1$stroke, levels = c("0", "1")), positive = "1")
+print(conf_matrix$table)
+# Extract precision,Recall and F1 from confusion matrix using the caret package #
+precision <- conf_matrix$byClass["Pos Pred Value"] 
+recall <- conf_matrix$byClass["Sensitivity"]
+f1 <- 2 * ((precision * recall)/ (precision + recall))
+print(f1)
+print(recall)
+print(precision)
+# At threshold of 0.4#
+pred_class <- factor(ifelse(pred_prob > 0.4, 1, 0), levels = c(0, 1))
+conf_matrix <- confusionMatrix(pred_class, factor(LR_stroke1$stroke, levels = c("0", "1")), positive = "1")
+print(conf_matrix$table)
+# Extract precision,Recall and F1 from confusion matrix using the caret package #
+precision <- conf_matrix$byClass["Pos Pred Value"] 
+recall <- conf_matrix$byClass["Sensitivity"]
+f1 <- 2 * ((precision * recall)/ (precision + recall))
+print(f1)
+print(recall)
+print(precision)
+# at threshold of 0.3#
+pred_class <- factor(ifelse(pred_prob > 0.3, 1, 0), levels = c(0, 1))
+conf_matrix <- confusionMatrix(pred_class, factor(LR_stroke1$stroke, levels = c("0", "1")), positive = "1")
+print(conf_matrix$table)
+# Extract precision,Recall and F1 from confusion matrix using the caret package #
+precision <- conf_matrix$byClass["Pos Pred Value"] 
+recall <- conf_matrix$byClass["Sensitivity"]
+f1 <- 2 * ((precision * recall)/ (precision + recall))
+print(f1)
+print(recall)
+print(precision)
+# at threshold of 0.2#
+pred_class <- factor(ifelse(pred_prob > 0.2, 1, 0), levels = c(0, 1))
+conf_matrix <- confusionMatrix(pred_class, factor(LR_stroke1$stroke, levels = c("0", "1")), positive = "1")
+print(conf_matrix$table)
+# Extract precision,Recall and F1 from confusion matrix using the caret package #
+precision <- conf_matrix$byClass["Pos Pred Value"] 
+recall <- conf_matrix$byClass["Sensitivity"]
+f1 <- 2 * ((precision * recall)/ (precision + recall))
+print(f1)
+print(recall)
+print(precision)
+# At Threshold of 0.18#
+pred_class <- factor(ifelse(pred_prob > 0.18, 1, 0), levels = c(0, 1))
+conf_matrix <- confusionMatrix(pred_class, factor(LR_stroke1$stroke, levels = c("0", "1")), positive = "1")
+print(conf_matrix$table)
+# Extract precision,Recall and F1 from confusion matrix using the caret package #
+precision <- conf_matrix$byClass["Pos Pred Value"] 
+recall <- conf_matrix$Class["Sensitivity"]
+f1 <- 2 * ((precision * recall)/ (precision + recall))
+print(f1)
+print(recall)
+print(precision)
+# At threshold of 0.15#
+pred_class <- factor(ifelse(pred_prob > 0.15, 1, 0), levels = c(0, 1))
+conf_matrix <- confusionMatrix(pred_class, factor(LR_stroke1$stroke, levels = c("0", "1")), positive = "1")
+print(conf_matrix$table)
+# Extract precision,Recall and F1 from confusion matrix using the caret package #
+precision <- conf_matrix$byClass["Pos Pred Value"] 
+recall <- conf_matrix$byClass["Sensitivity"]
+f1 <- 2 * ((precision * recall)/ (precision + recall))
+print(f1)
+print(recall)
+print(precision)
+# at threshold of 0.1#
+pred_class <- factor(ifelse(pred_prob > 0.1, 1, 0), levels = c(0, 1))
+conf_matrix <- confusionMatrix(pred_class, factor(LR_stroke1$stroke, levels = c("0", "1")), positive = "1")
+print(conf_matrix$table)
+# Extract precision,Recall and F1 from confusion matrix using the caret package #
+precision <- conf_matrix$byClass["Pos Pred Value"] 
+recall <- conf_matrix$byClass["Sensitivity"]
+f1 <- 2 * ((precision * recall)/ (precision + recall))
+print(f1)
+print(recall)
+print(precision)
+# at threshold of 0.05#
+pred_class <- factor(ifelse(pred_prob > 0.05, 1, 0), levels = c(0, 1))
+conf_matrix <- confusionMatrix(pred_class, factor(LR_stroke1$stroke, levels = c("0", "1")), positive = "1")
+print(conf_matrix$table)
+# Extract precision,Recall and F1 from confusion matrix using the caret package #
+precision <- conf_matrix$byClass["Pos Pred Value"] 
+recall <- conf_matrix$byClass["Sensitivity"]
+f1 <- 2 * ((precision * recall)/ (precision + recall))
+print(f1)
+print(recall)
+print(precision)
+# Using the different Confusion Matrices, Create the ROC curve
+```
+
+### References
+
+::: {#refs}
+:::
