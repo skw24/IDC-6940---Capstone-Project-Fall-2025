@@ -1,0 +1,167 @@
+---
+title: "2models-finalattempt"
+author: "steven wong"
+format: html
+editor: visual
+---
+
+```         
+text
+```
+
+`--- title: "Comparison of Baseline vs Firth Logistic Regression" format: html execute:   echo: true   warning: false   message: false ---`
+
+# Required Packages
+
+if (!require("dplyr")) install.packages("dplyr", dependencies=TRUE)\
+if (!require("car")) install.packages("car", dependencies=TRUE)\
+if (!require("ResourceSelection")) install.packages("ResourceSelection", dependencies=TRUE)\
+if (!require("caret")) install.packages("caret", dependencies=TRUE)\
+if (!require("pROC")) install.packages("pROC", dependencies=TRUE)\
+if (!require("logistf")) install.packages("logistf", dependencies=TRUE)\
+if (!require("ggplot2")) install.packages("ggplot2", dependencies=TRUE)\
+library(dplyr)\
+library(car)\
+library(ResourceSelection)\
+library(caret)\
+library(pROC)\
+library(logistf)\
+library(ggplot2)
+
+```         
+text
+```
+
+`undefined`
+
+# Data loading and cleaning
+
+stroke1 \<- read.csv("D.csv") \# Change to your CSV location\
+stroke1\[stroke1 == "NA" \| stroke1 == "Unknown" \| stroke1 == "other"\] \<- NA\
+stroke1\$bmi \<- round(as.numeric(stroke1\$bmi), 2)\
+stroke1\$gender\[stroke1\$gender == "Male"\] \<- 1\
+stroke1\$gender\[stroke1\$gender == "Female"\] \<- 2\
+stroke1\$gender \<- as.numeric(stroke1\$gender)\
+stroke1\$stroke \<- as.factor(stroke1\$stroke)\
+stroke1clean \<- na.omit(stroke1)
+
+```         
+text
+```
+
+`undefined`
+
+# Histogram and exploratory plots
+
+ggplot(stroke1clean, aes(x = gender)) + geom_bar(fill = "blue", color = "white") + labs(title = "Histogram of Gender", x = "Gender", y = "Frequency")\
+ggplot(stroke1clean, aes(x = age)) + geom_histogram(binwidth = 5, fill = "green", color = "white") + labs(title = "Histogram of Age", x = "Age", y = "Frequency")\
+ggplot(stroke1clean, aes(x = hypertension)) + geom_bar(fill = "purple", color = "white") + labs(title = "Histogram of Hypertension", x = "Hypertension", y = "Frequency")\
+ggplot(stroke1clean, aes(x = heartdisease)) + geom_bar(fill = "orange", color = "white") + labs(title = "Histogram of Heart Disease", x = "Heart Disease", y = "Frequency")\
+ggplot(stroke1clean, aes(x = evermarried)) + geom_bar(fill = "aquamarine", color = "white") + labs(title = "Histogram of Ever Married", x = "Ever Married", y = "Frequency")\
+ggplot(stroke1clean, aes(x = worktype)) + geom_bar(fill = "steelblue", color = "white") + labs(title = "Histogram of Work Type", x = "Work Type", y = "Frequency")\
+ggplot(stroke1clean, aes(x = Residence_type)) + geom_bar(fill = "magenta", color = "white") + labs(title = "Histogram of Residence Type", x = "Residence Type", y = "Frequency")\
+ggplot(stroke1clean, aes(x = avg_glucose_level)) + geom_histogram(binwidth = 5, fill = "limegreen", color = "white") + labs(title = "Histogram of Avg Glucose Level", x = "Avg Glucose Level", y = "Frequency")\
+ggplot(stroke1clean, aes(x = bmi)) + geom_histogram(binwidth = 5, fill = "gold", color = "white") + labs(title = "Histogram of BMI", x = "BMI", y = "Frequency")\
+ggplot(stroke1clean, aes(x = smoking_status)) + geom_bar(fill = "deepskyblue", color = "white") + labs(title = "Smoking Status", x = "Smoking Status", y = "Frequency")\
+ggplot(stroke1clean, aes(x = stroke)) + geom_bar(fill = "tan", color = "white") + labs(title = "Stroke Status", x = "Stroke", y = "Frequency")
+
+```         
+text
+```
+
+`undefined`
+
+# Model for logistic regression
+
+formula \<- stroke \~ gender + age + hypertension + heart_disease + ever_married + work_type + Residence_type + avg_glucose_level + bmi + smoking_status\
+modelbase \<- glm(formula, data = stroke1clean, family = binomial())\
+probbase \<- predict(modelbase, type = "response")
+
+# Firth Logistic Regression
+
+modelfirth \<- logistf(formula, data = stroke1clean)\
+probfirth \<- predict(modelfirth, type = "response")\
+labels \<- stroke1clean\$stroke
+
+```         
+text
+```
+
+`undefined`
+
+# Prediction function and metrics
+
+predbase \<- factor(ifelse(probbase \>= 0.5, 1, 0), levels = c(0, 1))\
+predfirth \<- factor(ifelse(probfirth \>= 0.5, 1, 0), levels = c(0, 1))
+
+# Confusion matrix, ROC, AUC, and Youden's J
+
+metrics \<- function(pred, prob, labels, name) {\
+cm \<- confusionMatrix(pred, labels, positive = "1")\
+rocobj \<- roc(labels, as.numeric(prob))\
+aucval \<- auc(rocobj)\
+precision \<- cm\$byClass\["Pos Pred Value"\]\
+recall \<- cm\$byClass\["Sensitivity"\]\
+f1 \<- 2 \* precision \* recall / (precision + recall)\
+youden \<- coords(rocobj, "best", best.method = "youden", ret = c("threshold", "sensitivity", "specificity", "youden"))\
+list(confusion = cm\$table, precision = precision, recall = recall, f1 = f1, auc = aucval, rocobj = rocobj, youden = youden, modelname = name)\
+}\
+resultsbase \<- metrics(predbase, probbase, labels, "Baseline GLM")\
+resultsfirth \<- metrics(predfirth, probfirth, labels, "Firth Logistic")
+
+```         
+text
+```
+
+`undefined`
+
+# Print results for each model
+
+cat("Baseline Logistic Regression\\n")\
+print(resultsbase)\
+cat("\\nJ (optimal threshold): ", resultsbase\$youden, "\\n")
+
+cat("\\nFirth Logistic Regression\\n")\
+print(resultsfirth)\
+cat("\\nJ (optimal threshold): ", resultsfirth\$youden, "\\n")
+
+```         
+text
+```
+
+`undefined`
+
+# ROC Curves
+
+plot(resultsbase\$rocobj, col = "blue", main = "ROC Curves: Baseline (blue) vs Firth (red)")\
+plot(resultsfirth\$rocobj, col = "red", add = TRUE)\
+legend("bottomright", legend = c("Baseline", "Firth"), col = c("blue", "red"), lwd = 2)\
+points(1 - resultsbase\$youden\["specificity"\], resultsbase\$youden\["sensitivity"\], col = "blue", pch = 19, cex = 1.5)\
+points(1 - resultsfirth\$youden\["specificity"\], resultsfirth\$youden\["sensitivity"\], col = "red", pch = 19, cex = 1.5)\
+text(x = 1 - resultsbase\$youden\["specificity"\], y = resultsbase\$youden\["sensitivity"\],\
+labels = paste0("Youden ", round(resultsbase\$youden\["youden"\], 3)), pos = 4, col = "blue")\
+text(x = 1 - resultsfirth\$youden\["specificity"\], y = resultsfirth\$youden\["sensitivity"\],\
+labels = paste0("Youden ", round(resultsfirth\$youden\["youden"\], 3)), pos = 4, col = "red")
+
+```         
+text
+```
+
+`undefined`
+
+# Confusion Matrices
+
+par(mfrow = c(1, 2))\
+fourfoldplot(resultsbase\$confusion, color = c("#CC6666", "#99CC99"), conf.level = 0, margin = 1, main = "Baseline Confusion Matrix")\
+fourfoldplot(resultsfirth\$confusion, color = c("#CC6666", "#99CC99"), conf.level = 0, margin = 1, main = "Firth Confusion Matrix")\
+par(mfrow = c(1,1))
+
+```         
+text
+```
+
+1.  
+
+2.  <https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/92717674/e8407d9c-6bcf-437a-94be-69792e57dcdd/unchanged_vsFIRTH_10242025_SW.R>
+
+3.  
